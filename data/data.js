@@ -145,7 +145,7 @@ const CAMERA_SPECS_4G = {
 // Nút "Kiểm tra SN bảo hành ngay" ở tab Tra cứu Bảo hành sẽ mở link này.
 // ⚠️ THAY bằng URL tra cứu bảo hành thật của bạn.
 // ─────────────────────────────────────────────────────────────────────────────
-const WARRANTY_CHECK_URL = "https://www.tapo.com/vn/warranty-check/";
+const WARRANTY_CHECK_URL = "https://www.tp-link.com/vn/warranty/";
 
 
 // ─── 7. TRUNG TÂM TIẾP NHẬN ỦY QUYỀN ────────────────────────────────────────
