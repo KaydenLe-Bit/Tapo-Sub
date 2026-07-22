@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kayden Installer Portal</title>
+
+  <!-- Environment SDKs -->
+  <script src="/_sdk/telemetry_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+
+  <!-- DATA FILE -->
+  <script src="data/data.js"></script>
+
+  <!-- External Libraries -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap&subset=vietnamese" rel="stylesheet">
+
+  <style>
+    /* ===================================================================
+       BẢNG MÀU XANH DƯƠNG — Blue Palette
+    =================================================================== */
+    :root {
+      --blue-50:  #eff6ff;
+      --blue-100: #dbeafe;
+      --blue-200: #bfdbfe;
+      --blue-400: #60a5fa;
+      --blue-500: #3b82f6;
+      --blue-600: #2563eb; /* Màu chủ đạo */
+      --blue-700: #1d4ed8;
+      --blue-800: #1e40af;
+      --blue-900: #1e3a8a;
+      --blue-ink: #0f172a;
+      --bg-app:   #f0f4ff;
+      --sidebar-w: 240px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg-app);
+      color: #1e293b;
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+
+    /* ================================================================
+       LAYOUT: Desktop = Sidebar + Content | Mobile = Top bar + Bottom nav
+    ================================================================ */
+
+    /* === APP SHELL === */
+    #app-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* === DESKTOP SIDEBAR === */
+    #sidebar {
+      width: var(--sidebar-w);
+      background: linear-gradient(180deg, #0f172a 0%, #1e3a8a 100%);
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 1.5rem 1.25rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .sidebar-logo img { height: 36px; border-radius: 8px; }
+    .sidebar-logo .brand { color: #fff; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em; }
+    .sidebar-logo .brand span { color: #60a5fa; }
+
+    .sidebar-search-btn {
+      margin: 1rem 1.25rem 0.5rem;
+      display: flex; align-items: center; gap: 0.625rem;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 0.625rem 0.875rem;
+      color: rgba(255,255,255,0.55);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: calc(100% - 2.5rem);
+      text-align: left;
+    }
+    .sidebar-search-btn:hover {
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.85);
+    }
+    .sidebar-search-btn kbd {
+      margin-left: auto;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: 0.68rem;
+      font-family: monospace;
+    }
+
+    .sidebar-nav { padding: 0.75rem 0.875rem; flex: 1; }
+    .sidebar-section-label {
+      color: rgba(255,255,255,0.3);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.5rem 0.375rem 0.375rem;
+      margin-top: 0.5rem;
+    }
+
+    .sidebar-nav-btn {
+      display: flex; align-items: center; gap: 0.75rem;
+      width: 100%; padding: 0.625rem 0.75rem;
+      border-radius: 10px;
+      font-size: 0.875rem; font-weight: 500;
+      color: rgba(255,255,255,0.6);
+      background: transparent;
+      border: none; cursor: pointer;
+      transition: all 0.18s;
+      margin-bottom: 2px;
+      text-align: left;
+    }
+    .sidebar-nav-btn:hover {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.9);
+    }
+    .sidebar-nav-btn.active {
+      background: var(--blue-600);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+    }
+    .sidebar-nav-btn .icon-wrap {
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 7px;
+      background: rgba(255,255,255,0.08);
+      flex-shrink: 0;
+      transition: background 0.18s;
+    }
+    .sidebar-nav-btn.active .icon-wrap {
+      background: rgba(255,255,255,0.2);
+    }
+    .sidebar-nav-btn svg { width: 15px; height: 15px; }
+
+    .sidebar-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .zalo-sidebar-btn {
+      display: flex; align-items: center; gap: 0.625rem;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      text-decoration: none;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.8rem; font-weight: 500;
+      transition: all 0.2s;
+    }
+    .zalo-sidebar-btn:hover {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+    }
+    .zalo-sidebar-btn img { height: 22px; border-radius: 4px; }
+
+    /* === MAIN CONTENT === */
+    #main-content {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* === DESKTOP TOP BAR === */
+    #desktop-topbar {
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0.875rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .topbar-title {
+      font-size: 1.125rem; font-weight: 700;
+      color: #0f172a;
+    }
+    .topbar-title span { color: var(--blue-600); }
+
+    /* === PAGE CONTENT === */
+    #page-content {
+      padding: 2rem;
+      max-width: 1100px;
+    }
+
+    /* === MOBILE HEADER === */
+    #mobile-header {
+      display: none;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      padding: 0.875rem 1rem;
+      position: sticky; top: 0; z-index: 100;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mobile-logo { display: flex; align-items: center; gap: 0.625rem; }
+    .mobile-logo img { height: 30px; border-radius: 6px; }
+    .mobile-logo .brand { color: #fff; font-weight: 800; font-size: 1rem; }
+    .mobile-logo .brand span { color: #60a5fa; }
+    .mobile-search-btn {
+      width: 38px; height: 38px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      color: rgba(255,255,255,0.85);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mobile-search-btn:hover { background: rgba(255,255,255,0.2); }
+
+    /* === MOBILE BOTTOM NAV === */
+    #mobile-bottom-nav {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #fff;
+      border-top: 1px solid #e2e8f0;
+      z-index: 100;
+      padding: 0 0 env(safe-area-inset-bottom, 0);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+    }
+    .mobile-nav-inner {
+      display: flex;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .mobile-nav-inner::-webkit-scrollbar { display: none; }
+    .mobile-nav-item {
+      flex: 1; min-width: 64px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 0.5rem 0.25rem 0.625rem;
+      gap: 3px;
+      color: #94a3b8;
+      font-size: 0.65rem; font-weight: 500;
+      cursor: pointer;
+      border: none; background: transparent;
+      transition: all 0.15s;
+      position: relative;
+    }
+    .mobile-nav-item::before {
+      content: '';
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 28px; height: 2.5px;
+      border-radius: 0 0 4px 4px;
+      background: transparent;
+      transition: all 0.15s;
+    }
+    .mobile-nav-item.active::before { background: var(--blue-600); }
+    .mobile-nav-item.active { color: var(--blue-600); }
+    .mobile-nav-item .nav-icon {
+      width: 22px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mobile-nav-item svg { width: 20px; height: 20px; }
+
+    /* === RESPONSIVE BREAKPOINTS === */
+    @media (max-width: 1023px) {
+      #sidebar { display: none; }
+      #desktop-topbar { display: none; }
+      #main-content { margin-left: 0; }
+      #page-content { padding: 1rem 1rem 6rem; }
+      #mobile-header { display: flex; }
+      #mobile-bottom-nav { display: block; }
+    }
+
+    /* ================================================================
+       UI COMPONENTS
+    ================================================================ */
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 1.75rem;
+    }
+    .page-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.375rem;
+      background: var(--blue-50);
+      color: var(--blue-700);
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid var(--blue-200);
+      margin-bottom: 0.625rem;
+    }
+    .page-title {
+      font-size: 1.75rem; font-weight: 800;
+      color: #0f172a; letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin: 0 0 0.375rem;
+    }
+    .page-sub {
+      color: #64748b; font-size: 0.9rem;
+      margin: 0;
+    }
+
+    /* Cards */
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #e8edf5;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .card:hover { box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08); }
+
+    /* Search Input */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    .search-wrap .search-icon {
+      position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+      color: #94a3b8; pointer-events: none;
+      width: 18px; height: 18px;
+    }
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.875rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      background: #fff;
+      color: #1e293b;
+      transition: all 0.2s;
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: var(--blue-500);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+    }
+    .search-input::placeholder { color: #94a3b8; }
+
+    /* Pill buttons (filter) */
+    .pill-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 0.375rem;
+      padding: 0.4rem 0.875rem;
+      border-radius: 999px;
+      border: 1.5px solid #e2e8f0;
+      background: #fff;
+      color: #64748b;
+      font-size: 0.8rem; font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .pill:hover { border-color: var(--blue-400); color: var(--blue-700); background: var(--blue-50); }
+    .pill.active {
+      border-color: var(--blue-600);
+      background: var(--blue-600);
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(37,99,235,0.3);
+    }
+
+    /* FAQ cards */
+    .faq-card {
+      background: #fff;
+      border-radius: 14px;
+      border: 1.5px solid #e8edf5;
+      overflow: hidden;
+      margin-bottom: 0.625rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .faq-card:hover { border-color: var(--blue-300); box-shadow: 0 4px 16px rgba(37,99,235,0.08); }
+    .faq-card.open { border-color: var(--blue-500); }
+    .faq-trigger {
+      width: 100%; text-align: left;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: none; border: none; cursor: pointer;
+    }
+    .faq-model-badge {
+      display: inline-block;
+      background: var(--blue-50); color: var(--blue-700);
+      font-size: 0.68rem; font-weight: 700;
+      padding: 0.2rem 0.6rem; border-radius: 6px;
+      margin-bottom: 0.375rem;
+      border: 1px solid var(--blue-200);
+    }
+    .faq-question { font-size: 0.9rem; font-weight: 600; color: #1e293b; line-height: 1.4; }
+    .faq-chevron { flex-shrink: 0; color: #94a3b8; margin-top: 2px; transition: transform 0.2s; }
+    .faq-card.open .faq-chevron { transform: rotate(180deg); color: var(--blue-600); }
+    .faq-answer {
+      padding: 0 1.25rem 1.25rem;
+      border-top: 1px solid #f1f5f9;
+    }
+    .faq-answer-inner {
+      background: var(--blue-50);
+      border-left: 3px solid var(--blue-500);
+      border-radius: 0 10px 10px 0;
+      padding: 0.875rem 1rem;
+      color: #334155;
+      font-size: 0.875rem;
+      line-height: 1.65;
+      white-space: pre-line;
+    }
+
+    /* Product / Video cards */
+    .video-card {
+      background: #fff;
+      border-radius: 14px;
+      border: 1.5px solid #e8edf5;
+      padding: 1.25rem;
+      display: flex; flex-direction: column;
+      transition: all 0.2s;
+    }
+    .video-card:hover { border-color: var(--blue-300); box-shadow: 0 8px 24px rgba(37,99,235,0.1); transform: translateY(-2px); }
+    .video-type-badge {
+      display: inline-block;
+      background: #f1f5f9; color: #64748b;
+      font-size: 0.72rem; font-weight: 600;
+      padding: 0.25rem 0.625rem; border-radius: 6px;
+      margin-bottom: 0.75rem;
+    }
+    .video-title { font-size: 0.95rem; font-weight: 700; color: #1e293b; flex: 1; margin-bottom: 1rem; line-height: 1.4; }
+    .video-link-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.625rem;
+      border-radius: 10px;
+      font-size: 0.8rem; font-weight: 600;
+      text-decoration: none;
+      background: var(--blue-50); color: var(--blue-700);
+      border: 1.5px solid var(--blue-200);
+      transition: all 0.15s;
+    }
+    .video-link-btn:hover { background: var(--blue-600); color: #fff; border-color: var(--blue-600); }
+    .video-link-btn.yt { background: #fff1f0; color: #dc2626; border-color: #fecaca; }
+    .video-link-btn.yt:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
+
+    /* Calculator segments */
+    .segment-group {
+      display: inline-flex;
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 4px;
+      gap: 2px;
+      margin-bottom: 1.5rem;
+    }
+    .segment-btn {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 9px;
+      border: none; cursor: pointer;
+      font-size: 0.82rem; font-weight: 600;
+      color: #64748b; background: transparent;
+      transition: all 0.15s;
+    }
+    .segment-btn.active {
+      background: #fff;
+      color: var(--blue-700);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    /* Result card */
+    .result-card {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 60%, #3b82f6 100%);
+      border-radius: 18px;
+      padding: 1.75rem;
+      color: #fff;
+      position: relative; overflow: hidden;
+    }
+    .result-card::before {
+      content: '';
+      position: absolute; top: -60px; right: -40px;
+      width: 200px; height: 200px;
+      border-radius: 50%; background: rgba(255,255,255,0.06);
+      pointer-events: none;
+    }
+    .result-card::after {
+      content: '';
+      position: absolute; bottom: -80px; left: -40px;
+      width: 260px; height: 260px;
+      border-radius: 50%; background: rgba(255,255,255,0.04);
+      pointer-events: none;
+    }
+    .result-num {
+      font-size: 3.5rem; font-weight: 900;
+      letter-spacing: -0.04em; line-height: 1;
+    }
+    .result-unit { font-size: 1.25rem; font-weight: 600; color: #93c5fd; margin-left: 0.375rem; }
+    .result-sub { font-size: 0.8rem; color: #93c5fd; margin-top: 0.625rem; line-height: 1.5; }
+    .result-badge {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.25rem;
+    }
+    .result-badge p { font-size: 0.75rem; color: #bfdbfe; margin: 0 0 0.25rem; }
+    .result-badge strong { font-size: 1rem; font-weight: 700; }
+
+    /* Warranty card */
+    .warranty-wrap {
+      max-width: 440px; margin: 0 auto;
+    }
+    .warranty-hero {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      border-radius: 18px 18px 0 0;
+      padding: 2.5rem 2rem;
+      text-align: center; color: #fff;
+    }
+    .warranty-hero .shield-icon {
+      width: 56px; height: 56px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem;
+    }
+    .warranty-body {
+      background: #fff;
+      border-radius: 0 0 18px 18px;
+      border: 1.5px solid #e8edf5;
+      border-top: none;
+      padding: 1.5rem;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      width: 100%; padding: 0.875rem;
+      background: var(--blue-600);
+      color: #fff; font-weight: 700; font-size: 0.9rem;
+      border-radius: 12px; border: none; cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+    }
+    .btn-primary:hover { background: var(--blue-700); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(37,99,235,0.4); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      width: 100%; padding: 0.75rem;
+      background: #fff; color: #374151;
+      font-weight: 600; font-size: 0.875rem;
+      border-radius: 12px; border: 1.5px solid #e2e8f0; cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: #f8fafc; border-color: #cbd5e1; }
+
+    /* Installer centers */
+    .center-card {
+      background: #fff;
+      border-radius: 14px;
+      border: 1.5px solid #e8edf5;
+      padding: 1.125rem 1.25rem;
+      transition: all 0.2s;
+    }
+    .center-card:hover { border-color: var(--blue-300); box-shadow: 0 6px 18px rgba(37,99,235,0.08); }
+    .center-region-badge {
+      font-size: 0.68rem; font-weight: 700;
+      padding: 0.2rem 0.625rem; border-radius: 6px;
+      background: var(--blue-50); color: var(--blue-700);
+      border: 1px solid var(--blue-200);
+    }
+
+    /* Catalog product cards */
+    .catalog-card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1.5px solid #e8edf5;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .catalog-card:hover { border-color: var(--blue-300); box-shadow: 0 10px 28px rgba(37,99,235,0.1); transform: translateY(-3px); }
+    .catalog-card-img {
+      height: 180px; overflow: hidden;
+      background: #f8fafc;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .catalog-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+    .catalog-card:hover .catalog-card-img img { transform: scale(1.05); }
+    .cat-badge {
+      position: absolute; top: 10px; left: 10px;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(4px);
+      color: var(--blue-700); font-size: 0.68rem; font-weight: 700;
+      padding: 0.25rem 0.625rem; border-radius: 8px;
+    }
+    .catalog-card-body { padding: 1rem 1.125rem 1.25rem; }
+    .catalog-card-name { font-size: 0.95rem; font-weight: 700; color: #1e293b; margin-bottom: 0.375rem; line-height: 1.3; }
+    .catalog-card-desc { font-size: 0.8rem; color: #64748b; line-height: 1.5; margin-bottom: 0.75rem;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .catalog-card-cta { font-size: 0.78rem; font-weight: 600; color: var(--blue-600); display: flex; align-items: center; gap: 0.25rem; }
+
+    /* Compare checkbox label */
+    .compare-label {
+      position: absolute; top: 10px; right: 10px;
+      display: flex; align-items: center; gap: 0.375rem;
+      background: rgba(255,255,255,0.9); backdrop-filter: blur(4px);
+      color: #64748b; font-size: 0.7rem; font-weight: 600;
+      padding: 0.275rem 0.625rem; border-radius: 8px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .compare-label.selected { background: var(--blue-600); color: #fff; }
+
+    /* Form controls */
+    .form-label { display: block; font-size: 0.82rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem; }
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 0.9rem; color: #1e293b; background: #fff;
+      transition: all 0.2s; outline: none;
+    }
+    .form-input:focus { border-color: var(--blue-500); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+
+    /* Resolution button grid */
+    .res-btn {
+      padding: 0.5rem 0.25rem;
+      font-size: 0.78rem; font-weight: 600;
+      border-radius: 10px;
+      border: 1.5px solid #e2e8f0;
+      background: #fff; color: #64748b;
+      cursor: pointer; transition: all 0.15s;
+      text-align: center;
+    }
+    .res-btn:hover { border-color: var(--blue-400); color: var(--blue-700); background: var(--blue-50); }
+    .res-btn.active { border-color: var(--blue-600); background: var(--blue-600); color: #fff; box-shadow: 0 3px 10px rgba(37,99,235,0.3); }
+
+    /* Range slider */
+    input[type=range] { accent-color: var(--blue-600); }
+
+    /* Compare bar */
+    #compare-bar {
+      background: #fff;
+      border-top: 1.5px solid #e2e8f0;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+    }
+
+    /* Zalo bottom (mobile - removed old one, now in sidebar only) */
+    .zalo-mobile-bar {
+      display: none;
+    }
+
+    /* Fade animation */
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Global Search Overlay */
+    #global-search-overlay {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .search-panel { animation: searchSlide 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes searchSlide { from { opacity: 0; transform: translateY(-12px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .gs-result-btn {
+      width: 100%; text-align: left;
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.75rem 0.875rem; border-radius: 10px;
+      background: none; border: 1px solid transparent;
+      cursor: pointer; transition: all 0.12s;
+    }
+    .gs-result-btn:hover { background: var(--blue-50); border-color: var(--blue-200); }
+    .gs-highlight { background: #fef9c3; border-radius: 2px; padding: 0 2px; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Spec table */
+    .spec-row { display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid #f1f5f9; }
+    .spec-row:hover { background: #fafbff; margin: 0 -0.75rem; padding-left: 0.75rem; padding-right: 0.75rem; border-radius: 8px; }
+    .spec-key { font-size: 0.82rem; font-weight: 600; color: #374151; width: 180px; flex-shrink: 0; }
+    .spec-val { font-size: 0.82rem; color: #64748b; flex: 1; }
+
+    /* Info box */
+    .info-box {
+      background: var(--blue-50);
+      border: 1.5px solid var(--blue-200);
+      border-radius: 12px;
+      padding: 1rem 1.125rem;
+      display: flex; gap: 0.75rem; align-items: flex-start;
+      font-size: 0.85rem; color: #1e3a8a; line-height: 1.6;
+    }
+    .info-box svg { flex-shrink: 0; color: var(--blue-600); margin-top: 1px; }
+
+    .warning-box {
+      background: #fff7ed;
+      border: 1.5px solid #fed7aa;
+      border-radius: 12px;
+      padding: 1rem 1.125rem;
+      display: flex; gap: 0.75rem; align-items: flex-start;
+      font-size: 0.82rem; color: #92400e; line-height: 1.6;
+    }
+    .warning-box svg { flex-shrink: 0; color: #f97316; margin-top: 1px; }
+
+    /* Suggestion box */
+    .suggest-box {
+      background: var(--blue-50);
+      border: 1.5px solid var(--blue-200);
+      border-radius: 12px;
+      padding: 1.125rem;
+    }
+    .suggest-box-title { font-size: 0.85rem; font-weight: 700; color: var(--blue-800); margin-bottom: 0.375rem; display: flex; align-items: center; gap: 0.5rem; }
+
+    /* capacity presets */
+    .cap-preset {
+      display: inline-flex;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem; font-weight: 600;
+      border: 1.5px solid #e2e8f0; background: #fff; color: #64748b;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .cap-preset:hover { border-color: var(--blue-400); background: var(--blue-50); color: var(--blue-700); }
+  </style>
+</head>
+<body>
+<div id="app-shell">
+
+  <!-- ==========================================
+       DESKTOP SIDEBAR
+  ========================================== -->
+  <nav id="sidebar" role="navigation" aria-label="Điều hướng chính">
+    <div class="sidebar-logo">
+      <img src="https://static.tapo.com/res/new-home/tapo.svg?v=202410101530" alt="Logo" loading="lazy"
+           onerror="this.style.background='#1e40af';this.alt='K'">
+      <div class="brand">Kayden <span>TPS</span></div>
+      <a href="https://www.youtube.com/@Kayden" target="_blank" rel="noopener noreferrer"
+         class="ml-auto text-red-400 hover:text-red-300 transition-colors" title="YouTube">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/>
+        </svg>
+      </a>
+    </div>
+
+    <button class="sidebar-search-btn" onclick="openGlobalSearch()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Tìm kiếm nhanh...
+      <kbd>/</kbd>
+    </button>
+
+    <div class="sidebar-nav">
+      <div class="sidebar-section-label">Công cụ</div>
+      <button onclick="switchTab('faq')" id="nav-faq" class="sidebar-nav-btn">
+        <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+        Hỗ trợ & Lỗi
+      </button>
+      <button onclick="switchTab('catalog')" id="nav-catalog" class="sidebar-nav-btn">
+        <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+        Tra cứu Thông số
+      </button>
+      <button onclick="switchTab('products')" id="nav-products" class="sidebar-nav-btn">
+        <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></span>
+        Video hướng dẫn
+      </button>
+      <button onclick="switchTab('calculator')" id="nav-calculator" class="sidebar-nav-btn">
+        <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg></span>
+        Lưu trữ & Data
+      </button>
+      <button onclick="switchTab('lock')" id="nav-lock" class="sidebar-nav-btn">
+        <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+        Tra cứu Bảo hành
+      </button>
+      <button onclick="switchTab('installer')" id="nav-installer" class="sidebar-nav-btn">
+        <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+        Trung tâm Ủy quyền
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <a href="https://zalo.me/Tapovietnam" target="_blank" rel="noopener noreferrer" class="zalo-sidebar-btn">
+        <img src="https://inkythuatso.com/uploads/images/2021/09/zalo-logo-inkythuatso-14-15-03-04.jpg" alt="Zalo" loading="lazy" onerror="this.style.display='none'">
+        <div>
+          <div style="font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.85)">Liên hệ Zalo</div>
+          <div style="font-size:0.68rem;color:rgba(255,255,255,0.45);margin-top:1px">Hỗ trợ trực tiếp</div>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;opacity:0.4"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ==========================================
+       MAIN CONTENT AREA
+  ========================================== -->
+  <div id="main-content">
+
+    <!-- Mobile Header -->
+    <header id="mobile-header" role="banner">
+      <div class="mobile-logo">
+        <img src="https://static.tapo.com/res/new-home/tapo.svg?v=202410101530" alt="Logo" loading="lazy"
+             onerror="this.style.background='#1e40af'">
+        <div class="brand">Kayden <span>TPS</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem">
+        <a href="https://www.youtube.com/@Kayden" target="_blank" rel="noopener noreferrer"
+           style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.12);border-radius:10px;color:#f87171;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/></svg>
+        </a>
+        <button class="mobile-search-btn" onclick="openGlobalSearch()" aria-label="Tìm kiếm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Desktop Top Bar -->
+    <div id="desktop-topbar">
+      <div class="topbar-title" id="topbar-page-title">
+        <span>Video</span> hướng dẫn
+      </div>
+      <button onclick="openGlobalSearch()"
+        style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;color:#64748b;font-size:0.82rem;font-weight:500;cursor:pointer;transition:all 0.2s;"
+        onmouseover="this.style.borderColor='#93c5fd';this.style.color='#2563eb'"
+        onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Tìm nhanh
+        <kbd style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:1px 6px;font-size:0.68rem;font-family:monospace;margin-left:2px">/</kbd>
+      </button>
+    </div>
+
+    <!-- Page Content -->
+    <div id="page-content">
+
+      <!-- ===== FAQ TAB ===== -->
+      <div id="tab-faq" class="fade-in hidden">
+        <div class="page-header">
+          <div class="page-eyebrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            Hỗ trợ kỹ thuật
+          </div>
+          <h1 class="page-title">Các vấn đề thường gặp</h1>
+          <p class="page-sub">Tìm kiếm nhanh lỗi, cách xử lý và hướng dẫn cho từng thiết bị.</p>
+        </div>
+        <div class="search-wrap" style="max-width:560px">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="faq-search" class="search-input" placeholder="Tìm theo mã lỗi, tên thiết bị..." oninput="filterFaqs()">
+        </div>
+        <div id="faq-list"></div>
+      </div>
+
+      <!-- ===== CATALOG TAB ===== -->
+      <div id="tab-catalog" class="fade-in hidden">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- ===== PRODUCTS TAB ===== -->
+      <div id="tab-products" class="fade-in">
+        <div class="page-header">
+          <div class="page-eyebrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            Tài liệu
+          </div>
+          <h1 class="page-title">Video hướng dẫn & Cài đặt</h1>
+          <p class="page-sub">Danh sách video và tài liệu hướng dẫn cài đặt, cấu hình sản phẩm.</p>
+        </div>
+        <div class="search-wrap" style="max-width:560px">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="product-search" class="search-input" placeholder="Tìm kiếm video, model..." oninput="filterProducts()">
+        </div>
+        <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+
+      <!-- ===== CALCULATOR TAB ===== -->
+      <div id="tab-calculator" class="fade-in hidden">
+        <div class="page-header">
+          <div class="page-eyebrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8"/></svg>
+            Công cụ tính toán
+          </div>
+          <h1 class="page-title">Lưu trữ & Data Camera</h1>
+          <p class="page-sub">Ước tính dung lượng thẻ nhớ/ổ cứng hoặc data 4G cho hệ thống camera.</p>
+        </div>
+
+        <div class="segment-group">
+          <button onclick="setCalculatorSection('storage')" id="calc-section-storage" class="segment-btn active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12H2M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6L18.55 5.11A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" y1="16" x2="6.01" y2="16"/><line x1="10" y1="16" x2="10.01" y2="16"/></svg>
+            Thẻ nhớ / Ổ cứng
+          </button>
+          <button onclick="setCalculatorSection('data4g')" id="calc-section-data4g" class="segment-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Data 4G / SIM
+          </button>
+        </div>
+
+        <!-- Storage Section -->
+        <div id="calc-storage-section">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-7 card p-6">
+              <div class="segment-group" style="margin-bottom:1.5rem">
+                <button onclick="setCalcMode('storage')" id="mode-storage" class="segment-btn active">Tính theo dung lượng</button>
+                <button onclick="setCalcMode('days')" id="mode-days" class="segment-btn">Tính theo thời gian</button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:1.25rem">
+                <div>
+                  <label class="form-label">Độ phân giải Camera</label>
+                  <div id="resolution-btns" class="grid grid-cols-5 gap-2"></div>
+                  <p id="rate-info" style="font-size:0.75rem;color:#64748b;margin-top:0.5rem;display:flex;align-items:center;gap:0.375rem"></p>
+                </div>
+                <div>
+                  <label class="form-label">Số lượng Camera (Mắt)</label>
+                  <input type="number" id="calc-cameras" min="1" value="1" class="form-input" oninput="calculate()">
+                </div>
+                <div id="days-input-section">
+                  <label class="form-label">Thời gian cần lưu (Ngày)</label>
+                  <input type="number" id="calc-days" min="1" value="7" class="form-input" oninput="calculate()">
+                </div>
+                <div id="capacity-input-section" class="hidden">
+                  <label class="form-label">Dung lượng Thẻ nhớ / Ổ cứng (GB)</label>
+                  <input type="number" id="calc-capacity" min="1" value="64" class="form-input" oninput="calculate()">
+                  <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem" id="capacity-presets"></div>
+                </div>
+              </div>
+            </div>
+            <div class="lg:col-span-5">
+              <div class="result-card" style="position:relative;z-index:0">
+                <div style="position:relative;z-index:1">
+                  <p style="font-size:0.75rem;color:#93c5fd;font-weight:600;margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.06em">Kết quả ước tính</p>
+                  <div id="calc-result"></div>
+                  <p style="font-size:0.72rem;color:#7dd3fc;margin-top:1.5rem;font-style:italic">* Ước tính theo chuẩn nén H.265, ghi hình liên tục.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data 4G Section -->
+        <div id="calc-data4g-section" class="hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-7" style="display:flex;flex-direction:column;gap:1rem">
+              <div class="card p-6">
+                <h2 style="font-size:0.9rem;font-weight:700;color:#1e293b;margin-bottom:1.25rem;display:flex;align-items:center;gap:0.5rem">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                  Thông số thiết bị
+                </h2>
+                <div style="display:flex;flex-direction:column;gap:1rem">
+                  <div>
+                    <label class="form-label">Độ phân giải Camera</label>
+                    <div id="resolution4g-btns" class="grid grid-cols-2 md:grid-cols-3 gap-2"></div>
+                  </div>
+                  <div>
+                    <label class="form-label">Số lượng Camera (Mắt)</label>
+                    <input type="number" id="data4g-quantity" min="1" max="100" value="1" class="form-input" oninput="calculateData4g()">
+                  </div>
+                </div>
+              </div>
+              <div class="card p-6">
+                <h2 style="font-size:0.9rem;font-weight:700;color:#1e293b;margin-bottom:1.25rem;display:flex;align-items:center;gap:0.5rem">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Nhu cầu sử dụng
+                </h2>
+                <div style="display:flex;flex-direction:column;gap:1rem">
+                  <div>
+                    <label class="form-label">Chế độ xem / Lưu Cloud</label>
+                    <div style="display:flex;flex-wrap:wrap;gap:1rem;margin-top:0.25rem">
+                      <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.85rem">
+                        <input type="radio" name="data4g-viewMode" value="intermittent" checked onchange="calculateData4g()" style="accent-color:#2563eb"> Xem gián đoạn
+                      </label>
+                      <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.85rem">
+                        <input type="radio" name="data4g-viewMode" value="continuous" onchange="calculateData4g()" style="accent-color:#2563eb"> Xem / Lưu liên tục 24h
+                      </label>
+                    </div>
+                  </div>
+                  <div id="data4g-minutes-section">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
+                      <label class="form-label" style="margin:0">Tổng thời gian xem mỗi ngày</label>
+                      <span id="data4g-minutes-display" style="font-size:0.85rem;font-weight:700;color:#2563eb">30 phút</span>
+                    </div>
+                    <input type="range" id="data4g-minutesPerDay" min="1" max="300" step="1" value="30" style="width:100%" oninput="calculateData4g()">
+                    <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:#94a3b8;margin-top:0.25rem">
+                      <span>1 phút</span><span>5 tiếng</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="form-label">Số ngày tính toán</label>
+                    <input type="number" id="data4g-days" min="1" value="30" class="form-input" oninput="calculateData4g()">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="lg:col-span-5" style="display:flex;flex-direction:column;gap:1rem">
+              <div class="result-card" style="position:relative;z-index:0">
+                <div style="position:relative;z-index:1">
+                  <p style="font-size:0.75rem;color:#93c5fd;font-weight:600;margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;gap:0.375rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                    Kết quả dự kiến
+                  </p>
+                  <div class="result-badge">
+                    <p id="data4g-total-days-label">Tổng data cho 30 ngày</p>
+                    <div style="display:flex;align-items:baseline;gap:0.375rem">
+                      <span id="data4g-totalGB" class="result-num" style="font-size:2.75rem">0</span>
+                      <span class="result-unit">GB</span>
+                    </div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:0.75rem">
+                    <div class="result-badge">
+                      <p>Mỗi ngày</p>
+                      <div style="display:flex;align-items:baseline;gap:0.25rem">
+                        <span id="data4g-dailyGB" style="font-size:1.5rem;font-weight:800">0</span>
+                        <span style="font-size:0.8rem;color:#93c5fd">GB</span>
+                      </div>
+                    </div>
+                    <div class="result-badge">
+                      <p>Băng thông</p>
+                      <div style="display:flex;align-items:baseline;gap:0.25rem">
+                        <span id="data4g-totalMbps" style="font-size:1.5rem;font-weight:800">0</span>
+                        <span style="font-size:0.8rem;color:#93c5fd">Mbps</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p style="font-size:0.72rem;color:#7dd3fc;margin-top:1rem;font-style:italic">* Ước tính theo chuẩn nén H.265.</p>
+                </div>
+              </div>
+              <div class="suggest-box">
+                <div class="suggest-box-title">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  Gợi ý gói cước SIM 4G
+                </div>
+                <p id="data4g-recommendation" style="font-size:0.82rem;color:#1e40af;line-height:1.6">Đang tính toán...</p>
+              </div>
+              <div class="warning-box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <p><strong>Lưu ý:</strong> Data 4G tiêu hao nhiều khi <strong>mở app xem trực tiếp</strong> hoặc camera <strong>phát hiện chuyển động và đẩy video lên Cloud</strong>. Ở chế độ chờ tiêu tốn rất ít (vài MB/ngày).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== WARRANTY TAB ===== -->
+      <div id="tab-lock" class="fade-in hidden">
+        <div class="page-header">
+          <div class="page-eyebrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Bảo hành
+          </div>
+          <h1 class="page-title">Tra cứu bảo hành theo SN</h1>
+          <p class="page-sub">Kiểm tra tình trạng bảo hành thiết bị Tapo bằng số Serial Number.</p>
+        </div>
+        <div class="warranty-wrap">
+          <div class="warranty-hero">
+            <div class="shield-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h2 style="font-size:1.375rem;font-weight:800;margin:0 0 0.375rem">Kiểm tra SN bảo hành</h2>
+            <p style="color:rgba(255,255,255,0.65);font-size:0.85rem;margin:0">Mở cổng tra cứu bảo hành chính thức của Tapo</p>
+          </div>
+          <div class="warranty-body">
+            <div class="info-box" style="margin-bottom:1.25rem">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span>Số SN được in trên tem dán ở thân sản phẩm hoặc trong mục <strong>Cài đặt → Thông tin thiết bị</strong> trên app Tapo.</span>
+            </div>
+            <a id="warranty-check-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-bottom:0.75rem">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              Kiểm tra SN bảo hành ngay
+            </a>
+            <a href="https://zalo.me/Tapovietnam" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Không tra được? Liên hệ Zalo hỗ trợ
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== INSTALLER TAB ===== -->
+      <div id="tab-installer" class="fade-in hidden">
+        <div class="page-header">
+          <div class="page-eyebrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Địa điểm
+          </div>
+          <h1 class="page-title">Trung tâm tiếp nhận ủy quyền</h1>
+          <p class="page-sub">Chọn nhóm và khu vực để xem danh sách trung tâm tiếp nhận ủy quyền Tapo.</p>
+        </div>
+
+        <div style="margin-bottom:1.25rem">
+          <label class="form-label">Bạn là:</label>
+          <div class="pill-group">
+            <button id="auth-group-tgdd" onclick="setAuthGroup('tgdd')" class="pill active">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              Thế Giới Di Động
+            </button>
+            <button id="auth-group-other" onclick="setAuthGroup('other')" class="pill">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              NPP / Đại lý / Khách hàng
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.5rem">
+          <label class="form-label">Khu vực:</label>
+          <div class="pill-group">
+            <button id="auth-region-bac" onclick="setAuthRegion('bac')" class="pill">Miền Bắc</button>
+            <button id="auth-region-trung" onclick="setAuthRegion('trung')" class="pill">Miền Trung</button>
+            <button id="auth-region-nam" onclick="setAuthRegion('nam')" class="pill">Miền Nam</button>
+          </div>
+        </div>
+
+        <div id="centers-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </div>
+
+    </div><!-- /page-content -->
+
+    <!-- Footer (desktop only) -->
+    <footer style="padding:1.5rem 2rem;border-top:1px solid #e2e8f0;margin-top:2rem">
+      <p id="footer-text" style="font-size:0.78rem;color:#94a3b8;margin:0">© 2026 Kayden Installer Portal. Dành riêng cho kỹ thuật viên và thợ lắp đặt.</p>
+    </footer>
+
+  </div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<!-- Compare Bar -->
+<div id="compare-bar" class="hidden fixed bottom-0 inset-x-0 z-[70]" style="background:#fff;border-top:1.5px solid #e2e8f0;box-shadow:0 -4px 20px rgba(0,0,0,0.08)"></div>
+
+<!-- Mobile Bottom Navigation -->
+<nav id="mobile-bottom-nav" aria-label="Điều hướng mobile">
+  <div class="mobile-nav-inner">
+    <button onclick="switchTab('faq')" id="mnav-faq" class="mobile-nav-item">
+      <div class="nav-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      </div>
+      Hỗ trợ
+    </button>
+    <button onclick="switchTab('catalog')" id="mnav-catalog" class="mobile-nav-item">
+      <div class="nav-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      Thông số
+    </button>
+    <button onclick="switchTab('products')" id="mnav-products" class="mobile-nav-item">
+      <div class="nav-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      </div>
+      Video
+    </button>
+    <button onclick="switchTab('calculator')" id="mnav-calculator" class="mobile-nav-item">
+      <div class="nav-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01"/></svg>
+      </div>
+      Tính toán
+    </button>
+    <button onclick="switchTab('lock')" id="mnav-lock" class="mobile-nav-item">
+      <div class="nav-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      Bảo hành
+    </button>
+    <button onclick="switchTab('installer')" id="mnav-installer" class="mobile-nav-item">
+      <div class="nav-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      Ủy quyền
+    </button>
+  </div>
+</nav>
+
+<!-- Global Search Overlay -->
+<div id="global-search-overlay" class="hidden fixed inset-0 z-[300]" onclick="closeGlobalSearchBackdrop(event)">
+  <div class="search-panel max-w-2xl mx-auto mt-16 px-4" onclick="event.stopPropagation()">
+    <div style="background:#fff;border-radius:18px;box-shadow:0 24px 64px rgba(0,0,0,0.2);overflow:hidden;border:1px solid #e2e8f0">
+      <div style="display:flex;align-items:center;gap:0.75rem;padding:0 1.125rem;border-bottom:1px solid #f1f5f9">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="global-search-input" type="text"
+          placeholder="Tìm FAQ, video, thông số kỹ thuật..."
+          style="flex:1;padding:1rem 0;font-size:0.95rem;border:none;outline:none;background:transparent;color:#1e293b"
+          oninput="runGlobalSearch()" onkeydown="handleSearchKeydown(event)" autocomplete="off">
+        <button onclick="closeGlobalSearch()" style="display:flex;align-items:center;gap:0.25rem;font-size:0.72rem;color:#94a3b8;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:3px 8px;cursor:pointer">ESC</button>
+      </div>
+      <div id="global-search-results" style="max-height:60vh;overflow-y:auto;padding:0.5rem;min-height:100px">
+        <p style="text-align:center;color:#94a3b8;font-size:0.85rem;padding:2.5rem 0">Nhập từ khóa để tìm kiếm...</p>
+      </div>
+      <div style="border-top:1px solid #f1f5f9;padding:0.625rem 1.125rem;display:flex;gap:1rem;font-size:0.7rem;color:#94a3b8">
+        <span style="display:flex;align-items:center;gap:0.25rem"><kbd style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:1px 4px;font-family:monospace">↵</kbd> mở</span>
+        <span style="display:flex;align-items:center;gap:0.25rem"><kbd style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:1px 4px;font-family:monospace">ESC</kbd> đóng</span>
+        <span style="margin-left:auto">Tìm trong: FAQ · Video · Thông số SP</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ================================================================
+  // STATE
+  // ================================================================
+  let activeTab = 'products';
+  let expandedFaq = null;
+  let calcMode = 'storage';
+  let resolution = '1080p';
+  let calculatorSection = 'storage';
+  let data4gResolution = '2MP (Full HD)';
+  let data4gViewMode = 'intermittent';
+  let currentCatalogSearchQuery = '';
+  let compareList = [];
+
+  const TAB_TITLES = {
+    faq: '<span>Hỗ trợ</span> & Lỗi',
+    catalog: 'Tra cứu <span>Thông số</span>',
+    products: '<span>Video</span> hướng dẫn',
+    calculator: '<span>Lưu trữ</span> & Data',
+    lock: 'Tra cứu <span>Bảo hành</span>',
+    installer: 'Trung tâm <span>Ủy quyền</span>'
+  };
+
+  // DEFAULT CONFIG
+  const defaultConfig = {
+    site_title: "Kayden",
+    footer_text: "© 2026 Kayden Installer Portal. Dành riêng cho kỹ thuật viên và thợ lắp đặt.",
+    primary_color: "#2563eb",
+    surface_color: "#ffffff",
+    text_color: "#1f2937",
+    accent_color: "#1d4ed8",
+    secondary_color: "#f0f4ff"
+  };
+
+  if (window.elementSdk) {
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => {
+        const title = config.site_title || defaultConfig.site_title;
+        const footer = config.footer_text || defaultConfig.footer_text;
+        const textCol = config.text_color || defaultConfig.text_color;
+        const secondary = config.secondary_color || defaultConfig.secondary_color;
+        const font = config.font_family || 'Inter';
+        const fontSize = config.font_size || 16;
+        document.getElementById('site-title') && (document.getElementById('site-title').textContent = title);
+        document.getElementById('footer-text').textContent = footer;
+        document.body.style.fontFamily = `${font}, sans-serif`;
+        document.body.style.fontSize = fontSize + 'px';
+        document.body.style.color = textCol;
+        document.body.style.backgroundColor = secondary;
+      },
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          { get: () => config.secondary_color || defaultConfig.secondary_color, set: (v) => { config.secondary_color = v; window.elementSdk.setConfig({ secondary_color: v }); } },
+          { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+          { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+          { get: () => config.primary_color || defaultConfig.primary_color, set: (v) => { config.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); } },
+          { get: () => config.accent_color || defaultConfig.accent_color, set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } }
+        ],
+        borderables: [],
+        fontEditable: { get: () => config.font_family || 'Inter', set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+        fontSizeable: { get: () => config.font_size || 16, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+      })
+    });
+  }
+
+  // ================================================================
+  // TAB SWITCHING
+  // ================================================================
+  function switchTab(tab) {
+    activeTab = tab;
+    const tabs = ['faq','catalog','products','calculator','lock','installer'];
+    tabs.forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);
+    });
+
+    // Desktop sidebar active
+    document.querySelectorAll('.sidebar-nav-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.id === 'nav-' + tab);
+    });
+
+    // Mobile bottom nav active
+    document.querySelectorAll('.mobile-nav-item').forEach(btn => {
+      btn.classList.toggle('active', btn.id === 'mnav-' + tab);
+    });
+
+    // Update desktop topbar title
+    const titleEl = document.getElementById('topbar-page-title');
+    if (titleEl) titleEl.innerHTML = TAB_TITLES[tab] || '';
+
+    if (tab === 'catalog') {
+      renderCatalogList();
+    } else {
+      lucide.createIcons();
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ================================================================
+  // CATALOG
+  // ================================================================
+  function renderCatalogList() {
+    const container = document.getElementById('tab-catalog');
+    const filteredProducts = (typeof TapoProducts !== 'undefined' ? TapoProducts : []).filter(p =>
+      p.name.toLowerCase().includes(currentCatalogSearchQuery.toLowerCase()) ||
+      p.category.toLowerCase().includes(currentCatalogSearchQuery.toLowerCase())
+    );
+
+    let productsHTML = filteredProducts.length === 0 ? `
+      <div style="grid-column:1/-1;text-align:center;padding:4rem 1rem;background:#fff;border-radius:16px;border:1.5px dashed #e2e8f0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 1rem"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <h3 style="font-size:1rem;font-weight:700;color:#374151;margin:0 0 0.375rem">Không tìm thấy sản phẩm</h3>
+        <p style="color:#94a3b8;font-size:0.85rem;margin:0">Thử từ khóa khác hoặc kiểm tra lại chính tả.</p>
+      </div>` :
+      filteredProducts.map(product => {
+        const isSelected = compareList.includes(product.id);
+        const compareDisabled = isCompareDisabled(product);
+        return `
+        <div onclick="renderCatalogDetail('${product.id}')" class="catalog-card">
+          <div class="catalog-card-img">
+            <img src="${product.image}" alt="${product.name}" loading="lazy">
+            <div class="cat-badge">${product.category}</div>
+            <label onclick="event.stopPropagation()" title="${compareDisabled ? 'Chỉ so sánh cùng loại (tối đa 2)' : ''}"
+              class="compare-label ${isSelected ? 'selected' : ''} ${compareDisabled ? 'opacity-40 cursor-not-allowed' : ''}">
+              <input type="checkbox" style="width:12px;height:12px;accent-color:#2563eb" ${isSelected ? 'checked' : ''} ${compareDisabled ? 'disabled' : ''} onchange="toggleCompare('${product.id}', event)">
+              So sánh
+            </label>
+            ${product.video ? `
+            <a href="${product.video}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"
+               style="position:absolute;bottom:10px;right:10px;display:inline-flex;align-items:center;gap:4px;background:rgba(220,38,38,0.9);backdrop-filter:blur(4px);color:#fff;font-size:0.68rem;font-weight:700;padding:0.3rem 0.625rem;border-radius:8px;text-decoration:none;transition:background 0.15s"
+               onmouseover="this.style.background='rgba(185,28,28,0.95)'" onmouseout="this.style.background='rgba(220,38,38,0.9)'">
+              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/></svg>
+              Video
+            </a>` : ''}
+          </div>
+          <div class="catalog-card-body">
+            <div class="catalog-card-name">${product.name}</div>
+            <div class="catalog-card-desc">${product.shortDesc}</div>
+            <div class="catalog-card-cta">
+              Xem thông số kỹ thuật
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+
+    container.innerHTML = `
+      <div class="page-header">
+        <div class="page-eyebrow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          Thư viện sản phẩm
+        </div>
+        <h1 class="page-title">Tra cứu thông số kỹ thuật</h1>
+        <p class="page-sub">Xem và tìm kiếm thông số chi tiết của các thiết bị Tapo.</p>
+      </div>
+      <div class="search-wrap" style="max-width:560px">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="catalog-search" class="search-input" placeholder="Tìm theo tên thiết bị hoặc danh mục..." value="${currentCatalogSearchQuery}">
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        ${productsHTML}
+      </div>`;
+
+    const searchInput = document.getElementById('catalog-search');
+    if (searchInput) {
+      const val = searchInput.value;
+      searchInput.value = ''; searchInput.value = val;
+      searchInput.addEventListener('input', (e) => { currentCatalogSearchQuery = e.target.value; renderCatalogList(); });
+    }
+    renderCompareBar();
+    lucide.createIcons();
+  }
+
+  // ================================================================
+  // COMPARE
+  // ================================================================
+  function isCompareDisabled(product) {
+    if (compareList.includes(product.id)) return false;
+    if (compareList.length >= 2) return true;
+    if (compareList.length === 1) {
+      const first = (typeof TapoProducts !== 'undefined' ? TapoProducts : []).find(p => p.id === compareList[0]);
+      return first && first.type !== product.type;
+    }
+    return false;
+  }
+
+  function toggleCompare(id, event) {
+    if (event) event.stopPropagation();
+    const idx = compareList.indexOf(id);
+    if (idx > -1) {
+      compareList.splice(idx, 1);
+    } else {
+      const products = typeof TapoProducts !== 'undefined' ? TapoProducts : [];
+      const product = products.find(p => p.id === id);
+      if (compareList.length >= 2) { showToast('Chỉ có thể chọn tối đa 2 sản phẩm'); return; }
+      if (compareList.length === 1) {
+        const first = products.find(p => p.id === compareList[0]);
+        if (first && first.type !== product.type) { showToast('Chỉ so sánh được các sản phẩm cùng loại'); return; }
+      }
+      compareList.push(id);
+    }
+    if (document.getElementById('catalog-search')) renderCatalogList(); else renderCompareBar();
+  }
+
+  function clearCompare() {
+    compareList = [];
+    if (document.getElementById('catalog-search')) renderCatalogList(); else renderCompareBar();
+  }
+
+  function renderCompareBar() {
+    const bar = document.getElementById('compare-bar');
+    if (!bar) return;
+    if (compareList.length === 0) { bar.innerHTML = ''; bar.classList.add('hidden'); return; }
+    bar.classList.remove('hidden');
+    const products = typeof TapoProducts !== 'undefined' ? TapoProducts : [];
+    const items = compareList.map(id => products.find(p => p.id === id));
+    const itemsHTML = items.map(p => `
+      <div style="display:flex;align-items:center;gap:0.5rem;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.375rem 0.5rem 0.375rem 0.625rem">
+        <img src="${p.image}" style="width:32px;height:32px;object-fit:cover;border-radius:6px">
+        <span style="font-size:0.8rem;font-weight:600;color:#374151;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</span>
+        <button onclick="toggleCompare('${p.id}', event)" style="color:#94a3b8;background:none;border:none;cursor:pointer;padding:2px;line-height:0" title="Xóa">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>`).join('');
+    const placeholder = compareList.length < 2 ? `<span style="font-size:0.8rem;color:#94a3b8;font-style:italic">Chọn thêm 1 sản phẩm cùng loại...</span>` : '';
+    bar.innerHTML = `
+      <div style="max-width:1100px;margin:0 auto;padding:0.75rem 2rem;display:flex;flex-wrap:wrap;align-items:center;gap:0.75rem">
+        <span style="font-size:0.82rem;font-weight:700;color:#374151;display:flex;align-items:center;gap:0.375rem">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          So sánh (${compareList.length}/2)
+        </span>
+        ${itemsHTML}
+        ${placeholder}
+        <div style="margin-left:auto;display:flex;align-items:center;gap:0.5rem">
+          <button onclick="clearCompare()" style="font-size:0.8rem;color:#94a3b8;background:none;border:none;cursor:pointer;padding:0.5rem">Xóa</button>
+          <button onclick="showCompareView()" ${compareList.length < 2 ? 'disabled' : ''} style="background:${compareList.length < 2 ? '#e2e8f0' : '#2563eb'};color:${compareList.length < 2 ? '#94a3b8' : '#fff'};border:none;border-radius:10px;padding:0.5rem 1.25rem;font-size:0.82rem;font-weight:700;cursor:${compareList.length < 2 ? 'not-allowed' : 'pointer'};transition:all 0.15s">Xem so sánh</button>
+        </div>
+      </div>`;
+  }
+
+  function showCompareView() {
+    if (compareList.length !== 2) return;
+    switchTab('catalog');
+    renderCatalogCompare();
+  }
+
+  function renderCatalogCompare() {
+    const products = typeof TapoProducts !== 'undefined' ? TapoProducts : [];
+    const items = compareList.map(id => products.find(p => p.id === id));
+    if (items.length !== 2 || !items[0] || !items[1]) return;
+    const [a, b] = items;
+    const keys = [...Object.keys(a.specs)];
+    Object.keys(b.specs).forEach(k => { if (!keys.includes(k)) keys.push(k); });
+
+    const rowsHTML = keys.map(key => {
+      const va = a.specs[key] || '—', vb = b.specs[key] || '—';
+      const diff = va !== vb;
+      return `<div style="display:grid;grid-template-columns:160px 1fr 1fr;gap:1rem;padding:0.75rem 1rem;border-bottom:1px solid #f1f5f9;${diff ? 'background:#fffbeb;border-radius:8px;margin:0 -4px;' : ''}">
+        <div style="font-size:0.8rem;font-weight:600;color:#374151">${key}</div>
+        <div style="font-size:0.8rem;color:#64748b">${va}</div>
+        <div style="font-size:0.8rem;color:#64748b">${vb}</div>
+      </div>`;
+    }).join('');
+
+    const productHeader = (p) => `<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:1.25rem">
+      <img src="${p.image}" alt="${p.name}" style="width:80px;height:80px;object-fit:cover;border-radius:12px;border:1.5px solid #e8edf5;margin-bottom:0.75rem">
+      <div style="font-weight:700;color:#1e293b;font-size:0.9rem">${p.name}</div>
+      <div style="font-size:0.72rem;color:#64748b;margin-top:0.25rem">${p.category}</div>
+    </div>`;
+
+    document.getElementById('tab-catalog').innerHTML = `
+      <button onclick="renderCatalogList()" style="margin-bottom:1.5rem;display:inline-flex;align-items:center;gap:0.5rem;font-size:0.82rem;font-weight:600;color:#64748b;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.5rem 1rem;cursor:pointer;transition:all 0.15s"
+        onmouseover="this.style.borderColor='#93c5fd';this.style.color='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Quay lại danh sách
+      </button>
+      <div style="overflow-x:auto">
+        <div style="min-width:580px;background:#fff;border-radius:16px;border:1.5px solid #e8edf5;overflow:hidden">
+          <div style="display:grid;grid-template-columns:160px 1fr 1fr;border-bottom:1.5px solid #e8edf5;background:#f8fafc">
+            <div></div>
+            ${productHeader(a)}
+            ${productHeader(b)}
+          </div>
+          <div style="padding:0.5rem 1rem 1rem">${rowsHTML}</div>
+        </div>
+      </div>
+      <p style="font-size:0.75rem;color:#94a3b8;margin-top:1rem;text-align:center">Dòng tô vàng là thông số khác nhau giữa 2 sản phẩm.</p>`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderCatalogDetail(productId) {
+    const products = typeof TapoProducts !== 'undefined' ? TapoProducts : [];
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    let specsHTML = '';
+    for (const [key, value] of Object.entries(product.specs)) {
+      specsHTML += `<div class="spec-row"><div class="spec-key">${key}</div><div class="spec-val">${value}</div></div>`;
+    }
+
+    document.getElementById('tab-catalog').innerHTML = `
+      <button onclick="renderCatalogList()" style="margin-bottom:1.5rem;display:inline-flex;align-items:center;gap:0.5rem;font-size:0.82rem;font-weight:600;color:#64748b;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.5rem 1rem;cursor:pointer;transition:all 0.15s"
+        onmouseover="this.style.borderColor='#93c5fd';this.style.color='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Quay lại danh sách
+      </button>
+      <div class="card" style="overflow:hidden;margin-bottom:1.5rem">
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="background:linear-gradient(135deg,#f0f4ff,#e0eaff);padding:2rem;display:flex;align-items:center;justify-content:center;min-height:220px">
+            <img src="${product.image}" alt="${product.name}" style="max-width:280px;width:100%;border-radius:12px;box-shadow:0 8px 24px rgba(37,99,235,0.15);transition:transform 0.3s" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+          </div>
+          <div style="padding:1.75rem">
+            <div style="display:inline-block;background:var(--blue-50);color:var(--blue-700);font-size:0.72rem;font-weight:700;padding:0.25rem 0.75rem;border-radius:999px;border:1px solid var(--blue-200);margin-bottom:0.875rem">${product.category}</div>
+            <h1 style="font-size:1.625rem;font-weight:800;color:#0f172a;letter-spacing:-0.03em;margin:0 0 0.75rem;line-height:1.2">${product.name}</h1>
+            <p style="color:#64748b;font-size:0.9rem;line-height:1.65;margin:0 0 1.5rem">${product.shortDesc}</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.75rem">
+              <button style="display:inline-flex;align-items:center;gap:0.5rem;background:#2563eb;color:#fff;border:none;border-radius:10px;padding:0.625rem 1.25rem;font-size:0.85rem;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(37,99,235,0.3);transition:all 0.15s"
+                onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Tải Datasheet
+              </button>
+              <button onclick="copyToClipboard('${product.name}')" style="display:inline-flex;align-items:center;gap:0.5rem;background:#fff;color:#374151;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.625rem 1.25rem;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.15s"
+                onmouseover="this.style.borderColor='#93c5fd';this.style.color='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#374151'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy tên SP
+              </button>
+            </div>
+            ${product.video ? `<div style="margin-top:1.125rem">
+              <a href="${product.video}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.82rem;font-weight:700;color:#dc2626;background:#fff1f0;border:1.5px solid #fecaca;border-radius:10px;padding:0.5rem 1rem;text-decoration:none;transition:all 0.15s"
+                onmouseover="this.style.background='#dc2626';this.style.color='#fff'" onmouseout="this.style.background='#fff1f0';this.style.color='#dc2626'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/></svg>
+                Xem video hướng dẫn
+              </a>
+            </div>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="card" style="padding:1.75rem">
+        <h2 style="font-size:1.1rem;font-weight:800;color:#0f172a;margin:0 0 1.25rem;display:flex;align-items:center;gap:0.625rem">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          Thông số kỹ thuật chi tiết
+        </h2>
+        <div style="padding:0 0.75rem">${specsHTML}</div>
+      </div>`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => showToast('Đã copy tên sản phẩm!')).catch(() => copyFallback(text));
+    } else { copyFallback(text); }
+  }
+  function copyFallback(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.cssText = 'position:fixed;left:-999999px;top:-999999px';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); showToast('Đã copy tên sản phẩm!'); } catch(e) {}
+    ta.remove();
+  }
+
+  function showToast(message) {
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:90px;right:1.25rem;background:#0f172a;color:#fff;padding:0.75rem 1.25rem;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.2);z-index:9999;display:flex;align-items:center;gap:0.625rem;font-size:0.85rem;font-weight:600;animation:fadeIn 0.3s ease';
+    toast.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${message}`;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(8px)'; toast.style.transition = 'all 0.3s'; setTimeout(() => toast.remove(), 300); }, 2800);
+  }
+
+  // ================================================================
+  // FAQ
+  // ================================================================
+  function filterFaqs() {
+    const term = document.getElementById('faq-search').value.toLowerCase();
+    const data = typeof faqsData !== 'undefined' ? faqsData : [];
+    const filtered = data.filter(f => f.question.toLowerCase().includes(term) || f.model.toLowerCase().includes(term));
+    renderFaqs(filtered, term);
+  }
+
+  function renderFaqs(faqs, term) {
+    const container = document.getElementById('faq-list');
+    if (faqs.length === 0) {
+      container.innerHTML = `<div style="text-align:center;padding:3rem 1rem;background:#fff;border-radius:16px;border:1.5px dashed #e2e8f0"><p style="color:#94a3b8;margin:0">Không tìm thấy kết quả cho "${term || ''}"</p></div>`;
+      return;
+    }
+    container.innerHTML = faqs.map((faq, i) => `
+      <div class="faq-card ${expandedFaq === i ? 'open' : ''}">
+        <button class="faq-trigger" onclick="toggleFaq(${i})">
+          <div style="text-align:left">
+            <div class="faq-model-badge">${faq.model}</div>
+            <div class="faq-question">${faq.question}</div>
+          </div>
+          <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        ${expandedFaq === i ? `
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            <strong style="display:block;margin-bottom:0.375rem;color:#1e3a8a">Cách xử lý / Giải thích:</strong>
+            ${faq.answer}
+          </div>
+          ${faq.link ? `<div style="margin-top:0.875rem">
+            <a href="${faq.link}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.8rem;font-weight:700;color:#dc2626;background:#fff1f0;border:1.5px solid #fecaca;border-radius:8px;padding:0.4rem 0.875rem;text-decoration:none">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/></svg>
+              Xem video hướng dẫn
+            </a>
+          </div>` : ''}
+        </div>` : ''}
+      </div>`).join('');
+  }
+
+  function toggleFaq(i) { expandedFaq = expandedFaq === i ? null : i; filterFaqs(); }
+
+  // ================================================================
+  // PRODUCTS / VIDEOS
+  // ================================================================
+  function filterProducts() {
+    const term = document.getElementById('product-search').value.toLowerCase();
+    const data = typeof productsData !== 'undefined' ? productsData : [];
+    const filtered = data.filter(p => p.model.toLowerCase().includes(term) || p.type.toLowerCase().includes(term));
+    renderProducts(filtered);
+  }
+
+  function renderProducts(prods) {
+    const isYouTube = (link) => link.includes('youtube.com') || link.includes('youtu.be');
+    document.getElementById('product-list').innerHTML = prods.map(p => {
+      const yt = isYouTube(p.link);
+      return `
+      <div class="video-card">
+        <div class="video-type-badge">${p.type}</div>
+        <div class="video-title">${p.model}</div>
+        <a href="${p.link}" target="_blank" rel="noopener noreferrer" class="video-link-btn ${yt ? 'yt' : ''}">
+          ${yt ? `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/></svg>` : `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`}
+          ${yt ? 'Xem trên YouTube' : 'Xem tài liệu'}
+        </a>
+      </div>`;
+    }).join('');
+  }
+
+  // ================================================================
+  // CALCULATOR
+  // ================================================================
+  function setCalcMode(mode) {
+    calcMode = mode;
+    ['storage','days'].forEach(m => {
+      document.getElementById('mode-' + m).className = 'segment-btn' + (m === mode ? ' active' : '');
+    });
+    document.getElementById('days-input-section').classList.toggle('hidden', mode !== 'storage');
+    document.getElementById('capacity-input-section').classList.toggle('hidden', mode !== 'days');
+    calculate();
+  }
+
+  function setResolution(res) {
+    resolution = res;
+    document.querySelectorAll('#resolution-btns button').forEach(btn => {
+      btn.className = 'res-btn' + (btn.dataset.res === res ? ' active' : '');
+    });
+    const rates = typeof resolutionRates !== 'undefined' ? resolutionRates : {};
+    document.getElementById('rate-info').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> ~${rates[res]} GB/Ngày (H.265)`;
+    calculate();
+  }
+
+  function calculate() {
+    const cameras = Math.max(1, parseInt(document.getElementById('calc-cameras').value) || 1);
+    const rates = typeof resolutionRates !== 'undefined' ? resolutionRates : {};
+    const rate = rates[resolution] || 0;
+    const resultEl = document.getElementById('calc-result');
+    if (calcMode === 'storage') {
+      const days = Math.max(1, parseInt(document.getElementById('calc-days').value) || 1);
+      const total = rate * cameras * days;
+      const display = total >= 1000 ? (total / 1024).toFixed(2) : Math.ceil(total);
+      const unit = total >= 1000 ? 'TB' : 'GB';
+      const suggest = total <= 32 ? '32 GB' : total <= 64 ? '64 GB' : total <= 128 ? '128 GB' : total <= 256 ? '256 GB' : total <= 512 ? '512 GB' : `${Math.ceil(total/1024)} TB`;
+      resultEl.innerHTML = `
+        <div style="display:flex;align-items:baseline;gap:0.375rem;position:relative;z-index:1">
+          <span class="result-num">${display}</span><span class="result-unit">${unit}</span>
+        </div>
+        <p class="result-sub">Để lưu <strong style="color:#fff">${cameras} camera</strong> (${resolution}) trong <strong style="color:#fff">${days} ngày</strong></p>
+        <div class="result-badge" style="position:relative;z-index:1">
+          <p>Gợi ý thẻ nhớ / Ổ cứng:</p>
+          <strong>${suggest}</strong>
+        </div>`;
+    } else {
+      const capacity = Math.max(1, parseInt(document.getElementById('calc-capacity').value) || 1);
+      const possibleDays = rate > 0 ? Math.floor(capacity / (rate * cameras)) : 0;
+      resultEl.innerHTML = `
+        <div style="display:flex;align-items:baseline;gap:0.375rem;position:relative;z-index:1">
+          <span class="result-num">${possibleDays}</span><span class="result-unit">Ngày</span>
+        </div>
+        <p class="result-sub">Với <strong style="color:#fff">${capacity >= 1024 ? (capacity/1024)+'TB' : capacity+'GB'}</strong>, hệ thống <strong style="color:#fff">${cameras} camera</strong> (${resolution}) lưu được tối đa.</p>`;
+    }
+  }
+
+  function initCalculator() {
+    const rates = typeof resolutionRates !== 'undefined' ? resolutionRates : {};
+    document.getElementById('resolution-btns').innerHTML = Object.keys(rates).map(res =>
+      `<button data-res="${res}" onclick="setResolution('${res}')" class="res-btn${res === resolution ? ' active' : ''}">${res}</button>`
+    ).join('');
+    document.getElementById('capacity-presets').innerHTML = [32,64,128,256,512,1024,2048,4096].map(c =>
+      `<button class="cap-preset" onclick="document.getElementById('calc-capacity').value=${c};calculate()">${c>=1024?(c/1024)+'TB':c+'GB'}</button>`
+    ).join('');
+    document.getElementById('rate-info').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> ~${rates[resolution]} GB/Ngày (H.265)`;
+    calculate();
+  }
+
+  function setCalculatorSection(section) {
+    calculatorSection = section;
+    ['storage','data4g'].forEach(s => {
+      document.getElementById('calc-section-' + s).className = 'segment-btn' + (s === section ? ' active' : '');
+    });
+    document.getElementById('calc-storage-section').classList.toggle('hidden', section !== 'storage');
+    document.getElementById('calc-data4g-section').classList.toggle('hidden', section !== 'data4g');
+  }
+
+  // DATA 4G
+  function setResolution4g(res) {
+    data4gResolution = res;
+    document.querySelectorAll('#resolution4g-btns button').forEach(btn => {
+      btn.className = 'res-btn' + (btn.dataset.res === res ? ' active' : '');
+    });
+    calculateData4g();
+  }
+
+  function getRecommendation4g(totalGB) {
+    if (totalGB < 10) return 'Gói cước cơ bản (1–2 GB/tháng) là đủ.';
+    if (totalGB < 30) return 'Khuyến nghị đăng ký gói cước 1 GB/ngày.';
+    if (totalGB < 60) return 'Khuyến nghị đăng ký gói cước 2 GB/ngày (VD: V120, C120...).';
+    if (totalGB < 120) return 'Khuyến nghị gói 4 GB/ngày hoặc không giới hạn dung lượng.';
+    return 'Cảnh báo: Dung lượng rất cao. Bắt buộc dùng gói Data không giới hạn (MAX Data) hoặc xem xét lắp mạng dây.';
+  }
+
+  function calculateData4g() {
+    const specs = typeof CAMERA_SPECS_4G !== 'undefined' ? CAMERA_SPECS_4G : {};
+    const quantity = Math.max(1, parseInt(document.getElementById('data4g-quantity').value) || 1);
+    const days = Math.max(1, parseInt(document.getElementById('data4g-days').value) || 1);
+    const viewMode = document.querySelector('input[name="data4g-viewMode"]:checked').value;
+    data4gViewMode = viewMode;
+    const minutesPerDay = parseInt(document.getElementById('data4g-minutesPerDay').value) || 1;
+    const bitrateMbps = (specs[data4gResolution] || {}).bitrate || 0;
+    const daily24hGB = bitrateMbps * 10.55;
+    const hourlyGB = daily24hGB / 24;
+    let dailyDataPerCam;
+    const minutesSection = document.getElementById('data4g-minutes-section');
+    if (viewMode === 'continuous') {
+      dailyDataPerCam = daily24hGB;
+      minutesSection.classList.add('hidden');
+    } else {
+      dailyDataPerCam = hourlyGB * (minutesPerDay / 60);
+      minutesSection.classList.remove('hidden');
+      document.getElementById('data4g-minutes-display').textContent = minutesPerDay + ' phút';
+    }
+    const totalDaily = dailyDataPerCam * quantity;
+    const totalPeriod = totalDaily * days;
+    const totalBandwidth = bitrateMbps * quantity;
+    document.getElementById('data4g-dailyGB').textContent = totalDaily.toFixed(2);
+    document.getElementById('data4g-totalGB').textContent = totalPeriod.toFixed(2);
+    document.getElementById('data4g-totalMbps').textContent = totalBandwidth.toFixed(1);
+    document.getElementById('data4g-total-days-label').textContent = `Tổng data cho ${days} ngày`;
+    document.getElementById('data4g-recommendation').textContent = getRecommendation4g(totalPeriod);
+  }
+
+  function initData4gCalculator() {
+    const specs = typeof CAMERA_SPECS_4G !== 'undefined' ? CAMERA_SPECS_4G : {};
+    document.getElementById('resolution4g-btns').innerHTML = Object.keys(specs).map(res =>
+      `<button data-res="${res}" onclick="setResolution4g('${res}')" class="res-btn${res === data4gResolution ? ' active' : ''}">${res}</button>`
+    ).join('');
+    calculateData4g();
+  }
+
+  // WARRANTY
+  function initWarrantyCheck() {
+    const link = document.getElementById('warranty-check-link');
+    if (link) link.href = (typeof WARRANTY_CHECK_URL !== 'undefined' && WARRANTY_CHECK_URL) || '#';
+  }
+
+  // INSTALLER
+  const REGION_LABEL = { bac: 'Miền Bắc', trung: 'Miền Trung', nam: 'Miền Nam' };
+  let authGroup = 'tgdd';
+  let authRegion = 'bac';
+
+  function setAuthGroup(group) {
+    authGroup = group;
+    document.querySelectorAll('[id^="auth-group-"]').forEach(btn => {
+      btn.classList.toggle('active', btn.id === 'auth-group-' + group);
+    });
+    renderAuthorizedCenters();
+  }
+
+  function setAuthRegion(region) {
+    authRegion = region;
+    document.querySelectorAll('[id^="auth-region-"]').forEach(btn => {
+      btn.classList.toggle('active', btn.id === 'auth-region-' + region);
+    });
+    renderAuthorizedCenters();
+  }
+
+  function renderAuthorizedCenters() {
+    // Update pill active states
+    document.querySelectorAll('[id^="auth-group-"]').forEach(btn => {
+      btn.classList.toggle('active', btn.id === 'auth-group-' + authGroup);
+    });
+    document.querySelectorAll('[id^="auth-region-"]').forEach(btn => {
+      btn.classList.toggle('active', btn.id === 'auth-region-' + authRegion);
+    });
+
+    const centers = (typeof AUTHORIZED_CENTERS !== 'undefined' ? AUTHORIZED_CENTERS : [])
+      .filter(c => c.group === authGroup && c.region === authRegion);
+    const list = document.getElementById('centers-list');
+    if (!list) return;
+
+    if (centers.length === 0) {
+      list.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:3.5rem 1rem;background:#fff;border-radius:16px;border:1.5px dashed #e2e8f0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 0.875rem"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><line x1="12" y1="8" x2="12" y2="8.01"/></svg>
+          <h3 style="font-size:1rem;font-weight:700;color:#374151;margin:0 0 0.375rem">Chưa có trung tâm tại ${REGION_LABEL[authRegion]}</h3>
+          <p style="color:#94a3b8;font-size:0.85rem;margin:0 0 1.125rem">Vui lòng liên hệ Zalo để được hướng dẫn.</p>
+          <a href="https://zalo.me/Tapovietnam" target="_blank" rel="noopener noreferrer" class="btn-primary" style="max-width:200px;margin:0 auto">Liên hệ Zalo</a>
+        </div>`;
+    } else {
+      list.innerHTML = centers.map(c => `
+        <div class="center-card">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;margin-bottom:0.625rem">
+            <h3 style="font-size:0.9rem;font-weight:700;color:#1e293b;margin:0">${c.name}</h3>
+            <span class="center-region-badge">${REGION_LABEL[c.region]}</span>
+          </div>
+          <p style="font-size:0.8rem;color:#64748b;display:flex;align-items:flex-start;gap:0.5rem;margin:0 0 ${c.phone ? '0.625rem' : '0'}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            ${c.address}
+          </p>
+          ${c.phone ? `<a href="tel:${c.phone.replace(/[^0-9+]/g,'')}" style="font-size:0.82rem;font-weight:600;color:#2563eb;display:flex;align-items:center;gap:0.5rem;text-decoration:none">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            ${c.phone}
+          </a>` : ''}
+        </div>`).join('');
+    }
+  }
+
+  // ================================================================
+  // GLOBAL SEARCH
+  // ================================================================
+  function openGlobalSearch() {
+    const overlay = document.getElementById('global-search-overlay');
+    const input = document.getElementById('global-search-input');
+    overlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => { input.focus(); input.value = ''; runGlobalSearch(); }, 30);
+  }
+  function closeGlobalSearch() {
+    document.getElementById('global-search-overlay').classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+  function closeGlobalSearchBackdrop(e) {
+    if (e.target === document.getElementById('global-search-overlay')) closeGlobalSearch();
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { closeGlobalSearch(); return; }
+    const tag = document.activeElement ? document.activeElement.tagName : '';
+    if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') { e.preventDefault(); openGlobalSearch(); }
+  });
+
+  function highlight(text, term) {
+    if (!term) return text;
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return text.replace(new RegExp('(' + escaped + ')', 'gi'), '<mark class="gs-highlight">$1</mark>');
+  }
+
+  function runGlobalSearch() {
+    const raw = document.getElementById('global-search-input').value;
+    const term = raw.toLowerCase().trim();
+    const el = document.getElementById('global-search-results');
+    if (!term) {
+      el.innerHTML = '<p style="text-align:center;color:#94a3b8;font-size:0.85rem;padding:2.5rem 0">Nhập từ khóa để tìm kiếm trên tất cả mục...</p>';
+      return;
+    }
+    const results = [];
+    (typeof faqsData !== 'undefined' ? faqsData : []).forEach((f, i) => {
+      if (f.question.toLowerCase().includes(term) || f.model.toLowerCase().includes(term) || f.answer.toLowerCase().includes(term))
+        results.push({ tab: 'faq', faqIndex: i, badge: 'Hỗ trợ', badgeCls: 'background:#fff7ed;color:#c2410c', icon: 'wrench', title: f.question, sub: f.model });
+    });
+    (typeof productsData !== 'undefined' ? productsData : []).forEach((p, i) => {
+      if (p.model.toLowerCase().includes(term) || p.type.toLowerCase().includes(term))
+        results.push({ tab: 'products', link: p.link, badge: 'Video', badgeCls: 'background:#fff1f0;color:#dc2626', icon: 'video', title: p.model, sub: p.type });
+    });
+    (typeof TapoProducts !== 'undefined' ? TapoProducts : []).forEach(p => {
+      if (p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term) || p.shortDesc.toLowerCase().includes(term))
+        results.push({ tab: 'catalog', productId: p.id, badge: 'Thông số', badgeCls: 'background:#eff6ff;color:#1d4ed8', icon: 'cpu', title: p.name, sub: p.category });
+    });
+
+    if (results.length === 0) {
+      el.innerHTML = `<p style="text-align:center;color:#94a3b8;font-size:0.85rem;padding:2.5rem 0">Không tìm thấy kết quả nào cho "<strong style="color:#374151">${raw}</strong>"</p>`;
+      return;
+    }
+    const groups = { faq: [], products: [], catalog: [] };
+    results.forEach(r => groups[r.tab].push(r));
+    const groupLabels = { faq: 'Hỗ trợ & Lỗi', products: 'Video hướng dẫn', catalog: 'Thông số kỹ thuật' };
+    let html = '';
+    ['faq','products','catalog'].forEach(key => {
+      if (!groups[key].length) return;
+      html += `<div>
+        <div style="padding:0.75rem 0.875rem 0.375rem;font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#94a3b8">${groupLabels[key]} (${groups[key].length})</div>`;
+      groups[key].forEach(r => {
+        const dataAttr = encodeURIComponent(JSON.stringify(r));
+        html += `
+        <button class="gs-result-btn" onclick="handleGlobalSearchResult(decodeURIComponent('${dataAttr}'))">
+          <span style="flex-shrink:0;padding:0.2rem 0.625rem;border-radius:6px;font-size:0.72rem;font-weight:700;${r.badgeCls}">${r.badge}</span>
+          <div style="min-width:0;flex:1">
+            <p style="font-size:0.85rem;font-weight:600;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0">${highlight(r.title, raw)}</p>
+            <p style="font-size:0.75rem;color:#94a3b8;margin:0;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.sub}</p>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>`;
+      });
+      html += '</div>';
+    });
+    el.innerHTML = html;
+  }
+
+  function handleSearchKeydown(e) {
+    if (e.key === 'Enter') {
+      const btns = document.querySelectorAll('.gs-result-btn');
+      if (btns.length > 0) btns[0].click();
+    }
+  }
+
+  function handleGlobalSearchResult(dataStr) {
+    const r = JSON.parse(dataStr);
+    closeGlobalSearch();
+    if (r.tab === 'faq') {
+      switchTab('faq');
+      const input = document.getElementById('faq-search');
+      if (input) { input.value = r.title; filterFaqs(); }
+      setTimeout(() => {
+        expandedFaq = r.faqIndex; filterFaqs();
+        const cards = document.querySelectorAll('.faq-card');
+        if (cards[0]) cards[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 80);
+    } else if (r.tab === 'products') {
+      switchTab('products');
+      setTimeout(() => { if (r.link) window.open(r.link, '_blank', 'noopener'); }, 100);
+    } else if (r.tab === 'catalog') {
+      switchTab('catalog');
+      setTimeout(() => renderCatalogDetail(r.productId), 80);
+    }
+  }
+
+  // ================================================================
+  // INIT
+  // ================================================================
+  filterFaqs();
+  filterProducts();
+  initCalculator();
+  initData4gCalculator();
+  setCalculatorSection('storage');
+  initWarrantyCheck();
+  renderAuthorizedCenters();
+  switchTab(activeTab);
+  lucide.createIcons();
+</script>
+</body>
+</html>
