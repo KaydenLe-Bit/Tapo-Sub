@@ -117,12 +117,11 @@ const TapoProducts = [
 // FORMAT: "Tên độ phân giải": số_GB_mỗi_ngày (chuẩn H.265, ghi liên tục)
 // ─────────────────────────────────────────────────────────────────────────────
 const resolutionRates = {
-  "1080p": 16,
-  "2K":    21,
-  "2K+":   27,
-  "3K":    32,
-  "4K":    48
-  // ADD_NEW_RESOLUTION ↑ Thêm độ phân giải mới tại đây
+  "1080p": 8,           // 2MP
+  "2K":    12,          // 3MP
+  "2K+":   16,          // 4MP
+  "3K":    21.333333,   // 5MP
+  "4K":    34           // ước tính từ bitrate 4Mbps (thay vì 32)
 };
 
 
@@ -130,17 +129,25 @@ const resolutionRates = {
 // FORMAT: "Nhãn hiển thị": { bitrate: Mbps }
 // ─────────────────────────────────────────────────────────────────────────────
 const CAMERA_SPECS_4G = {
-  "2MP (Full HD)": { bitrate: 1   },
+  "2MP (Full HD)": { bitrate: 1.0 },
   "3MP (2K)":      { bitrate: 1.5 },
-  "4MP (2K+)":     { bitrate: 2   },
-  "5MP (3K)":      { bitrate: 2.5 },
-  "6MP (3K+)":     { bitrate: 3   },
-  "8MP (4K)":      { bitrate: 4   }
-  // ADD_NEW_4G_RESOLUTION ↑ Thêm tại đây
+  "4MP (2K+)":     { bitrate: 2.0 },
+  "5MP (3K)":      { bitrate: 2.7 },
+  "6MP (3K+)":     { bitrate: 3.2 },
+  "8MP (4K)":      { bitrate: 4.0 }
+   // ADD_NEW_RESOLUTION ↑ Thêm độ phân giải mới tại đây
 };
 
 
-// ─── 6. TRA CỨU BẢO HÀNH (SN) ────────────────────────────────────────────────
+// ─── 6. TÙY CHỌN DUNG LƯỢNG — CÔNG CỤ TÍNH TOÁN ────────────────────────────
+// sdCapOptions : danh sách dung lượng thẻ nhớ MicroSD (GB)
+// hddPresetOptions: danh sách preset ổ cứng đầu ghi (GB)
+// ─────────────────────────────────────────────────────────────────────────────
+const sdCapOptions    = [16, 32, 64, 128, 256, 512];
+const hddPresetOptions = [500, 1024, 2048, 4096, 6144, 8192];
+
+
+// ─── 7. TRA CỨU BẢO HÀNH (SN) ────────────────────────────────────────────────
 // Đường dẫn tới trang tra cứu bảo hành chính thức theo Serial Number.
 // Nút "Kiểm tra SN bảo hành ngay" ở tab Tra cứu Bảo hành sẽ mở link này.
 // ⚠️ THAY bằng URL tra cứu bảo hành thật của bạn.
@@ -148,7 +155,7 @@ const CAMERA_SPECS_4G = {
 const WARRANTY_CHECK_URL = "https://www.tp-link.com/vn/warranty/";
 
 
-// ─── 7. TRUNG TÂM TIẾP NHẬN ỦY QUYỀN ────────────────────────────────────────
+// ─── 8. TRUNG TÂM TIẾP NHẬN ỦY QUYỀN ────────────────────────────────────────
 // FORMAT BẮT BUỘC:
 // {
 //   group: "tgdd" | "other",   ← "tgdd" = Thế Giới Di Động, "other" = NPP/Đại lý/Khách hàng
