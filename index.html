@@ -64,7 +64,7 @@
       </button>
       <button onclick="switchTab('calculator')" id="nav-calculator" class="sidebar-nav-btn">
         <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg></span>
-        Lưu trữ & Data
+        Công Cụ Tính Tapo
       </button>
       <button onclick="switchTab('lock')" id="nav-lock" class="sidebar-nav-btn">
         <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
@@ -130,7 +130,7 @@
     <div id="page-content">
 
       <!-- ===== FAQ TAB ===== -->
-      <div id="tab-faq" class="fade-in hidden">
+      <div id="tab-faq" class="fade-in">
         <div class="page-header">
           <div class="page-eyebrow">
             <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
@@ -152,7 +152,7 @@
       </div>
 
       <!-- ===== PRODUCTS TAB ===== -->
-      <div id="tab-products" class="fade-in">
+      <div id="tab-products" class="fade-in hidden">
         <div class="page-header">
           <div class="page-eyebrow">
             <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
@@ -336,7 +336,7 @@
   // ================================================================
   // STATE
   // ================================================================
-  let activeTab = 'products';
+  let activeTab = 'faq';
   let expandedFaq = null;
   let currentCatalogSearchQuery = '';
   let compareList = [];
