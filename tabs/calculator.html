@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tapo Tech Support - Công cụ tính toán lưu trữ</title>
+  <link rel="icon" type="image/png" href="https://cdn.aptoide.com/imgs/2/5/1/251d2f49094c11b3768f046e348677f7_icon.jpg">
+
+  <!-- DATA FILE — đường dẫn tương đối từ thư mục tabs/ lên gốc -->
+  <script src="../data/data.js"></script>
+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap&subset=vietnamese" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .result-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, #00b4db, #0083b0);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 p-4 md:p-8 max-w-6xl mx-auto m-0">
+
+  <div id="tab-calculator">
+    <div class="mb-6">
+      <span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full border border-blue-200 uppercase tracking-wider mb-2">
+        <i data-lucide="calculator" class="w-3.5 h-3.5"></i> Công cụ kỹ thuật Tapo
+      </span>
+      <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Tính Toán Lưu Trữ & Data Camera</h1>
+      <p class="text-slate-500 text-sm mt-1">Tính toán chính xác thời gian lưu trữ Thẻ nhớ, Dung lượng Ổ cứng đầu ghi và Data SIM cho Camera 4G (H.265 @15fps).</p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex bg-slate-100 rounded-xl p-1 gap-1 mb-6 max-w-xl">
+      <button onclick="switchTab('sdcard')" id="btn-tab-sdcard" class="tab-btn flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-semibold text-slate-500 transition-all bg-white text-blue-700 shadow"><i data-lucide="sd-card" class="w-4 h-4"></i> Thẻ nhớ MicroSD</button>
+      <button onclick="switchTab('hdd')" id="btn-tab-hdd" class="tab-btn flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-semibold text-slate-500 transition-all"><i data-lucide="hard-drive" class="w-4 h-4"></i> Ổ cứng Đầu ghi</button>
+      <button onclick="switchTab('camera4g')" id="btn-tab-camera4g" class="tab-btn flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-semibold text-slate-500 transition-all"><i data-lucide="wifi" class="w-4 h-4"></i> Camera 4G</button>
+    </div>
+
+    <!-- 1. TAB MICROSD -->
+    <div id="section-sdcard" class="tab-content grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">1. Chọn Độ phân giải Camera Tapo</label>
+          <div id="sd-res-btns" class="grid grid-cols-3 sm:grid-cols-5 gap-2"></div>
+          <p id="sd-rate-info" class="text-xs text-blue-600 font-medium mt-2 flex items-center gap-1.5"></p>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">2. Chọn Dung lượng Thẻ nhớ MicroSD</label>
+          <div id="sd-cap-btns" class="grid grid-cols-3 sm:grid-cols-6 gap-2"></div>
+        </div>
+        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 space-y-1">
+          <p>• <strong>Lưu ý:</strong> Nên chọn thẻ nhớ chuyên dụng ghi hình liên tục (Class 10, U3/V30 High Endurance).</p>
+          <p>• Thẻ nhớ ghi đè tự động (Overwrite) khi dung lượng đầy.</p>
+        </div>
+      </div>
+      <div class="lg:col-span-5">
+        <div class="result-card relative bg-white border border-slate-200 rounded-2xl p-7 shadow-sm overflow-hidden space-y-4">
+          <div class="flex items-center justify-between pb-1">
+            <div class="flex items-center gap-2"><div class="p-1.5 bg-sky-100 text-sky-600 rounded-lg"><i data-lucide="clock" class="w-4 h-4"></i></div><span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Thời gian tối đa</span></div>
+            <img src="https://static.tapo.com/res/new-home/tapo.svg?v=202410101530" alt="Tapo" class="h-5">
+          </div>
+          <div class="bg-gradient-to-br from-sky-50 to-sky-100 border border-sky-200 rounded-xl p-6">
+            <div class="flex items-center justify-between mb-2"><span class="text-xs font-bold text-sky-800 uppercase tracking-wide">Ghi hình 24/24</span><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-200/60 text-sky-800">H.265 Standard</span></div>
+            <div class="flex items-baseline gap-2"><span id="sd-result-days" class="text-6xl font-extrabold text-sky-700 tracking-tighter">0</span><span class="text-xl font-bold text-sky-600">Ngày</span></div>
+          </div>
+          <div class="bg-slate-50 border border-slate-100 rounded-xl p-3.5 flex items-center justify-between">
+            <span class="text-xs font-medium text-slate-500">Tổng thời gian</span>
+            <div class="text-right"><span id="sd-result-hours" class="text-base font-extrabold text-slate-800">0</span> <span class="text-xs font-semibold text-slate-500">Giờ liên tục</span></div>
+          </div>
+          <p class="text-[11px] text-slate-400 font-medium pt-2 border-t border-slate-100 flex items-center gap-1"><i data-lucide="info" class="w-3 h-3"></i> 15fps, nén H.265.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. TAB HDD -->
+    <div id="section-hdd" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+        <div class="flex bg-slate-100 rounded-xl p-1 gap-1">
+          <button onclick="setHddMode('calc-cap')" id="btn-hdd-cap" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-blue-700 shadow">Tính Dung lượng (TB)</button>
+          <button onclick="setHddMode('calc-days')" id="btn-hdd-days" class="flex-1 py-2 text-sm font-semibold rounded-lg text-slate-500">Tính Số ngày</button>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Độ phân giải Camera</label>
+          <div id="hdd-res-btns" class="grid grid-cols-3 sm:grid-cols-5 gap-2"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Số lượng (Mắt)</label>
+            <input type="number" id="hdd-cameras" min="1" value="4" class="w-full p-3 border-2 border-slate-200 rounded-xl outline-none focus:border-blue-500" oninput="calcHDD()">
+          </div>
+          <div id="hdd-days-input">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Số ngày lưu trữ</label>
+            <input type="number" id="hdd-days" min="1" value="30" class="w-full p-3 border-2 border-slate-200 rounded-xl outline-none focus:border-blue-500" oninput="calcHDD()">
+          </div>
+        </div>
+        <div id="hdd-cap-input" class="hidden">
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Dung lượng Ổ cứng (GB)</label>
+          <input type="number" id="hdd-capacity" min="1" value="1024" class="w-full p-3 border-2 border-slate-200 rounded-xl outline-none focus:border-blue-500 mb-2" oninput="calcHDD()">
+          <div id="hdd-cap-presets" class="flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+      <div class="lg:col-span-5">
+        <div class="result-card relative bg-white border border-slate-200 rounded-2xl p-7 shadow-sm overflow-hidden space-y-4">
+          <div class="flex items-center justify-between pb-1">
+            <div class="flex items-center gap-2"><div class="p-1.5 bg-sky-100 text-sky-600 rounded-lg"><i data-lucide="hard-drive" class="w-4 h-4"></i></div><span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Kết quả Ổ cứng</span></div>
+            <img src="https://static.tapo.com/res/new-home/tapo.svg?v=202410101530" alt="Tapo" class="h-5">
+          </div>
+          <div id="hdd-result-display"></div>
+          <p class="text-[11px] text-slate-400 font-medium pt-2 border-t border-slate-100 flex items-center gap-1"><i data-lucide="info" class="w-3 h-3"></i> Dùng ổ cứng chuyên dụng 24/7.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. TAB 4G -->
+    <div id="section-camera4g" class="tab-content hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-7 space-y-4">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+          <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2"><i data-lucide="camera" class="w-4 h-4 text-blue-600"></i> Thông số Camera</h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Độ phân giải</label>
+              <div id="cam4g-res-btns" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Số lượng (Mắt)</label>
+              <input type="number" id="cam4g-quantity" min="1" value="1" class="w-full p-3 border-2 border-slate-200 rounded-xl outline-none focus:border-blue-500" oninput="calc4G()">
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+          <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-blue-600"></i> Nhu cầu Xem trực tuyến</h3>
+          <div class="space-y-4">
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 text-sm font-medium cursor-pointer"><input type="radio" name="cam4g-view" value="intermittent" checked onchange="calc4G()" class="w-4 h-4 accent-blue-600"> Xem gián đoạn</label>
+              <label class="flex items-center gap-2 text-sm font-medium cursor-pointer"><input type="radio" name="cam4g-view" value="continuous" onchange="calc4G()" class="w-4 h-4 accent-blue-600"> Xem Cloud 24/7</label>
+            </div>
+            <div id="cam4g-min-section">
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Phút xem mỗi ngày</label>
+              <input type="number" id="cam4g-mins" min="1" value="30" class="w-full p-3 border-2 border-slate-200 rounded-xl outline-none focus:border-blue-500" oninput="calc4G()">
+              <p id="cam4g-mins-hint" class="text-xs text-slate-500 mt-1 font-medium"></p>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Chu kỳ tính (Ngày)</label>
+              <input type="number" id="cam4g-days" min="1" value="30" class="w-full p-3 border-2 border-slate-200 rounded-xl outline-none focus:border-blue-500" oninput="calc4G()">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lg:col-span-5 space-y-4">
+        <div class="result-card relative bg-white border border-slate-200 rounded-2xl p-7 shadow-sm overflow-hidden space-y-4">
+          <div class="flex items-center justify-between pb-1">
+            <div class="flex items-center gap-2"><div class="p-1.5 bg-sky-100 text-sky-600 rounded-lg"><i data-lucide="activity" class="w-4 h-4"></i></div><span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Lưu lượng Data</span></div>
+            <img src="https://static.tapo.com/res/new-home/tapo.svg?v=202410101530" alt="Tapo" class="h-5">
+          </div>
+          <div class="bg-gradient-to-br from-sky-50 to-sky-100 border border-sky-200 rounded-xl p-6">
+            <p id="cam4g-total-label" class="text-xs font-bold text-sky-800 uppercase tracking-wide mb-2">Dung lượng SIM 30 ngày</p>
+            <div class="flex items-baseline gap-2"><span id="cam4g-totalGB" class="text-6xl font-extrabold text-sky-700 tracking-tighter">0</span><span class="text-xl font-bold text-sky-600">GB</span></div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-slate-50 border border-slate-100 rounded-xl p-3.5 flex flex-col"><span class="text-xs font-medium text-slate-500">Mỗi ngày</span><span class="text-base font-extrabold"><span id="cam4g-dailyGB">0</span> <span class="text-xs font-semibold text-slate-500">GB</span></span></div>
+            <div class="bg-slate-50 border border-slate-100 rounded-xl p-3.5 flex flex-col"><span class="text-xs font-medium text-slate-500">Băng thông</span><span class="text-base font-extrabold"><span id="cam4g-mbps">0</span> <span class="text-xs font-semibold text-slate-500">Mbps</span></span></div>
+          </div>
+        </div>
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-5">
+          <div class="font-bold text-blue-900 text-sm mb-1 flex items-center gap-2"><i data-lucide="sim-card" class="w-4 h-4 text-blue-600"></i> Gợi ý gói cước</div>
+          <p id="cam4g-recommend" class="text-xs text-blue-800"></p>
+        </div>
+        <div class="bg-orange-50 border border-orange-100 rounded-xl p-4 flex gap-3 text-xs text-orange-900 leading-relaxed">
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-orange-600 shrink-0"></i>
+          <strong>Lưu ý:</strong> Data 4G chỉ tốn khi xem trực tiếp hoặc tải lên Cloud. Ở chế độ chờ (Standby), camera tiêu thụ rất ít (~5-10MB/ngày).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    
+    // Data Setup — lấy từ data.js (đã load ở <head>)
+    // resolutionRates trong data.js là GB/ngày → chuyển sang GB/giờ cho UI này
+    const resRates = Object.fromEntries(
+      Object.entries(resolutionRates).map(([k, v]) => [k, v / 24])
+    );
+
+    // sdCapOptions & hddPresetOptions lấy từ data.js, fallback nếu chưa có
+    const sdCaps = typeof sdCapOptions !== 'undefined'
+      ? sdCapOptions : [16, 32, 64, 128, 256, 512];
+    const hddPresets = typeof hddPresetOptions !== 'undefined'
+      ? hddPresetOptions : [500, 1024, 2048, 4096, 6144, 8192];
+
+    // CAMERA_SPECS_4G trong data.js chỉ có bitrate → tính rate (GB/giờ) = bitrate / 3
+    const cam4GData = Object.fromEntries(
+      Object.entries(CAMERA_SPECS_4G).map(([k, v]) => [k, { bit: v.bitrate, rate: v.bitrate / 3 }])
+    );
+
+    // State
+    let state = { sdRes: "1080p", sdCap: 64, hddRes: "1080p", hddMode: "calc-cap", cam4gRes: "2MP (Full HD)" };
+
+    const btnClass = (active) => `p-3 text-sm font-bold text-center rounded-xl border-2 transition-all cursor-pointer ${active ? 'border-blue-600 bg-blue-600 text-white shadow-md' : 'border-slate-200 bg-white text-slate-600 hover:border-blue-400 hover:bg-blue-50'}`;
+
+    // --- UI/Tab Logic ---
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.toggle('hidden', el.id !== `section-${tab}`));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        const isActive = btn.id === `btn-tab-${tab}`;
+        btn.className = `tab-btn flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all ${isActive ? 'bg-white text-blue-700 shadow' : 'text-slate-500'}`;
+      });
+    }
+
+    // --- 1. SD Card ---
+    const updateSdUI = () => {
+      $('sd-res-btns').innerHTML = Object.keys(resRates).map(r => `<button onclick="state.sdRes='${r}';updateSdUI()" class="${btnClass(r===state.sdRes)}">${r}</button>`).join('');
+      $('sd-cap-btns').innerHTML = sdCaps.map(c => `<button onclick="state.sdCap=${c};updateSdUI()" class="${btnClass(c===state.sdCap)}">${c}GB</button>`).join('');
+      const rate = resRates[state.sdRes];
+      $('sd-rate-info').innerHTML = `<i data-lucide="info" class="w-3.5 h-3.5 inline"></i> Tiêu tốn: <strong>${rate.toFixed(3)} GB/giờ</strong> (~${(rate*24).toFixed(1)} GB/ngày)`;
+      $('sd-result-days').textContent = ((state.sdCap/rate)/24).toFixed(1);
+      $('sd-result-hours').textContent = Math.floor(state.sdCap/rate);
+      lucide.createIcons();
+    };
+
+    // --- 2. HDD ---
+    function setHddMode(mode) {
+      state.hddMode = mode;
+      $('btn-hdd-cap').className = `flex-1 py-2 text-sm font-semibold rounded-lg ${mode==='calc-cap' ? 'bg-white text-blue-700 shadow' : 'text-slate-500'}`;
+      $('btn-hdd-days').className = `flex-1 py-2 text-sm font-semibold rounded-lg ${mode==='calc-days' ? 'bg-white text-blue-700 shadow' : 'text-slate-500'}`;
+      $('hdd-days-input').classList.toggle('hidden', mode==='calc-days');
+      $('hdd-cap-input').classList.toggle('hidden', mode==='calc-cap');
+      calcHDD();
+    }
+    
+    function setHddCap(cap) { $('hdd-capacity').value = cap; calcHDD(); }
+
+    const updateHddUI = () => {
+      $('hdd-res-btns').innerHTML = Object.keys(resRates).map(r => `<button onclick="state.hddRes='${r}';updateHddUI()" class="${btnClass(r===state.hddRes)}">${r}</button>`).join('');
+      $('hdd-cap-presets').innerHTML = hddPresets.map(c => `<button onclick="setHddCap(${c})" class="px-3 py-1.5 text-xs border border-slate-300 rounded-lg hover:bg-blue-50 hover:text-blue-600 font-semibold">${c>=1024 ? c/1024+'TB' : c+'GB'}</button>`).join('');
+      calcHDD();
+    };
+
+    function calcHDD() {
+      const cams = Math.max(1, parseInt($('hdd-cameras').value) || 1);
+      const rateDay = resRates[state.hddRes] * 24;
+      
+      if (state.hddMode === 'calc-cap') {
+        const days = Math.max(1, parseInt($('hdd-days').value) || 1);
+        const gb = Math.ceil(rateDay * days * cams);
+        $('hdd-result-display').innerHTML = `<div class="bg-gradient-to-br from-sky-50 to-sky-100 border border-sky-200 rounded-xl p-6 mb-3"><span class="text-xs font-bold text-sky-800 uppercase block mb-2">Dung lượng cần thiết</span><div class="flex items-baseline gap-2"><span class="text-6xl font-extrabold text-sky-700 tracking-tighter">${gb>=1000 ? (gb/1024).toFixed(2) : gb}</span><span class="text-xl font-bold text-sky-600">${gb>=1000 ? 'TB' : 'GB'}</span></div></div><div class="bg-slate-50 border border-slate-100 rounded-xl p-3.5"><span class="text-xs font-medium text-slate-500 block">Cấu hình:</span><span class="text-sm font-bold text-slate-800">${cams} Cam × ${days} Ngày (24/24)</span></div>`;
+      } else {
+        const cap = Math.max(1, parseFloat($('hdd-capacity').value) || 1024);
+        const days = ((cap / (resRates[state.hddRes] * cams)) / 24).toFixed(1);
+        $('hdd-result-display').innerHTML = `<div class="bg-gradient-to-br from-sky-50 to-sky-100 border border-sky-200 rounded-xl p-6 mb-3"><span class="text-xs font-bold text-sky-800 uppercase block mb-2">Thời gian đạt được</span><div class="flex items-baseline gap-2"><span class="text-6xl font-extrabold text-sky-700 tracking-tighter">${days}</span><span class="text-xl font-bold text-sky-600">Ngày</span></div></div><div class="bg-slate-50 border border-slate-100 rounded-xl p-3.5"><span class="text-xs font-medium text-slate-500 block">Cấu hình:</span><span class="text-sm font-bold text-slate-800">${cams} Cam trên ổ ${cap>=1024 ? (cap/1024).toFixed(1)+'TB' : cap+'GB'}</span></div>`;
+      }
+    }
+
+    // --- 3. Camera 4G ---
+    const update4GUI = () => {
+      $('cam4g-res-btns').innerHTML = Object.keys(cam4GData).map(r => `<button onclick="state.cam4gRes='${r}';update4GUI()" class="${btnClass(r===state.cam4gRes)}">${r}</button>`).join('');
+      calc4G();
+    };
+
+    function calc4G() {
+      const sp = cam4GData[state.cam4gRes];
+      const qty = Math.max(1, parseInt($('cam4g-quantity').value) || 1);
+      const isCont = document.querySelector('input[name="cam4g-view"]:checked').value === 'continuous';
+      const days = Math.max(1, parseInt($('cam4g-days').value) || 30);
+      const mins = Math.max(0, parseInt($('cam4g-mins').value) || 0);
+
+      $('cam4g-min-section').classList.toggle('hidden', isCont);
+      $('cam4g-mins-hint').textContent = mins >= 60 ? `~ ${(mins/60).toFixed(1)} giờ/ngày.` : `${mins} phút/ngày.`;
+
+      const dailyGB = (isCont ? sp.rate * 24 : sp.rate * (mins/60)) * qty;
+      const totalGB = dailyGB * days;
+
+      $('cam4g-totalGB').textContent = totalGB < 10 ? totalGB.toFixed(1) : Math.round(totalGB);
+      $('cam4g-dailyGB').textContent = dailyGB.toFixed(2);
+      $('cam4g-mbps').textContent = (sp.bit * qty).toFixed(1);
+      $('cam4g-total-label').textContent = `Dung lượng SIM ${days} ngày`;
+
+      $('cam4g-recommend').innerHTML = dailyGB <= 1 ? "Thấp. Nên chọn gói SIM khoảng <strong>1GB - 2GB/ngày</strong>." :
+                                       dailyGB <= 4 ? "Trung bình. Khuyên dùng gói SIM <strong>3GB - 4GB/ngày</strong>." :
+                                       `Cao (${dailyGB.toFixed(1)} GB/ngày). Bắt buộc chọn <strong>SIM 4G Không Giới Hạn</strong>.`;
+    }
+
+    window.onload = () => { updateSdUI(); updateHddUI(); update4GUI(); lucide.createIcons(); };
+  </script>
+</body>
+</html>
