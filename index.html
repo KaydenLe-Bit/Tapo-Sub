@@ -147,8 +147,16 @@
       </div>
 
       <!-- ===== CATALOG TAB ===== -->
+      <!-- Nội dung đã tách ra: tabs/catalog.html -->
       <div id="tab-catalog" class="fade-in hidden">
-        <!-- Rendered by JS -->
+        <iframe
+          id="catalog-iframe"
+          src="tabs/catalog.html"
+          style="width:100%;border:none;display:block;min-height:600px;transition:height 0.2s ease"
+          scrolling="no"
+          loading="lazy"
+          title="Tra cứu Thông số kỹ thuật"
+        ></iframe>
       </div>
 
       <!-- ===== PRODUCTS TAB ===== -->
@@ -338,8 +346,7 @@
   // ================================================================
   let activeTab = 'faq';
   let expandedFaq = null;
-  let currentCatalogSearchQuery = '';
-  let compareList = [];
+  // currentCatalogSearchQuery & compareList đã chuyển vào tabs/catalog.html
 
   const TAB_TITLES = {
     faq: '<span>Hỗ trợ</span> & Lỗi',
@@ -417,276 +424,16 @@
     const titleEl = document.getElementById('topbar-page-title');
     if (titleEl) titleEl.innerHTML = TAB_TITLES[tab] || '';
 
-    if (tab === 'catalog') {
-      renderCatalogList();
-    } else {
+    // Tab catalog đã tách sang tabs/catalog.html (iframe tự render)
+    if (tab !== 'catalog') {
       lucide.createIcons();
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // ================================================================
-  // CATALOG
-  // ================================================================
-  function renderCatalogList() {
-    const container = document.getElementById('tab-catalog');
-    const filteredProducts = (typeof TapoProducts !== 'undefined' ? TapoProducts : []).filter(p =>
-      p.name.toLowerCase().includes(currentCatalogSearchQuery.toLowerCase()) ||
-      p.category.toLowerCase().includes(currentCatalogSearchQuery.toLowerCase())
-    );
-
-    let productsHTML = filteredProducts.length === 0 ? `
-      <div style="grid-column:1/-1;text-align:center;padding:4rem 1rem;background:#fff;border-radius:16px;border:1.5px dashed #e2e8f0">
-        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 1rem"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <h3 style="font-size:1rem;font-weight:700;color:#374151;margin:0 0 0.375rem">Không tìm thấy sản phẩm</h3>
-        <p style="color:#94a3b8;font-size:0.85rem;margin:0">Thử từ khóa khác hoặc kiểm tra lại chính tả.</p>
-      </div>` :
-      filteredProducts.map(product => {
-        const isSelected = compareList.includes(product.id);
-        const compareDisabled = isCompareDisabled(product);
-        return `
-        <div onclick="renderCatalogDetail('${product.id}')" class="catalog-card">
-          <div class="catalog-card-img">
-            <img src="${product.image}" alt="${product.name}" loading="lazy">
-            <div class="cat-badge">${product.category}</div>
-            <label onclick="event.stopPropagation()" title="${compareDisabled ? 'Chỉ so sánh cùng loại (tối đa 2)' : ''}"
-              class="compare-label ${isSelected ? 'selected' : ''} ${compareDisabled ? 'opacity-40 cursor-not-allowed' : ''}">
-              <input type="checkbox" style="width:12px;height:12px;accent-color:#2563eb" ${isSelected ? 'checked' : ''} ${compareDisabled ? 'disabled' : ''} onchange="toggleCompare('${product.id}', event)">
-              So sánh
-            </label>
-            ${product.video ? `
-            <a href="${product.video}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"
-               style="position:absolute;bottom:10px;right:10px;display:inline-flex;align-items:center;gap:4px;background:rgba(220,38,38,0.9);backdrop-filter:blur(4px);color:#fff;font-size:0.68rem;font-weight:700;padding:0.3rem 0.625rem;border-radius:8px;text-decoration:none;transition:background 0.15s"
-               onmouseover="this.style.background='rgba(185,28,28,0.95)'" onmouseout="this.style.background='rgba(220,38,38,0.9)'">
-              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/></svg>
-              Video
-            </a>` : ''}
-          </div>
-          <div class="catalog-card-body">
-            <div class="catalog-card-name">${product.name}</div>
-            <div class="catalog-card-desc">${product.shortDesc}</div>
-            <div class="catalog-card-cta">
-              Xem thông số kỹ thuật
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </div>
-        </div>`;
-      }).join('');
-
-    container.innerHTML = `
-      <div class="page-header">
-        <div class="page-eyebrow">
-          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-          Thư viện sản phẩm
-        </div>
-        <h1 class="page-title">Tra cứu thông số kỹ thuật</h1>
-        <p class="page-sub">Xem và tìm kiếm thông số chi tiết của các thiết bị Tapo.</p>
-      </div>
-      <div class="search-wrap" style="max-width:560px">
-        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="catalog-search" class="search-input" placeholder="Tìm theo tên thiết bị hoặc danh mục..." value="${currentCatalogSearchQuery}">
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        ${productsHTML}
-      </div>`;
-
-    const searchInput = document.getElementById('catalog-search');
-    if (searchInput) {
-      const val = searchInput.value;
-      searchInput.value = ''; searchInput.value = val;
-      searchInput.addEventListener('input', (e) => { currentCatalogSearchQuery = e.target.value; renderCatalogList(); });
-    }
-    renderCompareBar();
-    lucide.createIcons();
-  }
-
-  // ================================================================
-  // COMPARE
-  // ================================================================
-  function isCompareDisabled(product) {
-    if (compareList.includes(product.id)) return false;
-    if (compareList.length >= 2) return true;
-    if (compareList.length === 1) {
-      const first = (typeof TapoProducts !== 'undefined' ? TapoProducts : []).find(p => p.id === compareList[0]);
-      return first && first.type !== product.type;
-    }
-    return false;
-  }
-
-  function toggleCompare(id, event) {
-    if (event) event.stopPropagation();
-    const idx = compareList.indexOf(id);
-    if (idx > -1) {
-      compareList.splice(idx, 1);
-    } else {
-      const products = typeof TapoProducts !== 'undefined' ? TapoProducts : [];
-      const product = products.find(p => p.id === id);
-      if (compareList.length >= 2) { showToast('Chỉ có thể chọn tối đa 2 sản phẩm'); return; }
-      if (compareList.length === 1) {
-        const first = products.find(p => p.id === compareList[0]);
-        if (first && first.type !== product.type) { showToast('Chỉ so sánh được các sản phẩm cùng loại'); return; }
-      }
-      compareList.push(id);
-    }
-    if (document.getElementById('catalog-search')) renderCatalogList(); else renderCompareBar();
-  }
-
-  function clearCompare() {
-    compareList = [];
-    if (document.getElementById('catalog-search')) renderCatalogList(); else renderCompareBar();
-  }
-
-  function renderCompareBar() {
-    const bar = document.getElementById('compare-bar');
-    if (!bar) return;
-    if (compareList.length === 0) { bar.innerHTML = ''; bar.classList.add('hidden'); return; }
-    bar.classList.remove('hidden');
-    const products = typeof TapoProducts !== 'undefined' ? TapoProducts : [];
-    const items = compareList.map(id => products.find(p => p.id === id));
-    const itemsHTML = items.map(p => `
-      <div style="display:flex;align-items:center;gap:0.5rem;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.375rem 0.5rem 0.375rem 0.625rem">
-        <img src="${p.image}" style="width:32px;height:32px;object-fit:cover;border-radius:6px">
-        <span style="font-size:0.8rem;font-weight:600;color:#374151;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</span>
-        <button onclick="toggleCompare('${p.id}', event)" style="color:#94a3b8;background:none;border:none;cursor:pointer;padding:2px;line-height:0" title="Xóa">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>`).join('');
-    const placeholder = compareList.length < 2 ? `<span style="font-size:0.8rem;color:#94a3b8;font-style:italic">Chọn thêm 1 sản phẩm cùng loại...</span>` : '';
-    bar.innerHTML = `
-      <div style="max-width:1100px;margin:0 auto;padding:0.75rem 2rem;display:flex;flex-wrap:wrap;align-items:center;gap:0.75rem">
-        <span style="font-size:0.82rem;font-weight:700;color:#374151;display:flex;align-items:center;gap:0.375rem">
-          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          So sánh (${compareList.length}/2)
-        </span>
-        ${itemsHTML}
-        ${placeholder}
-        <div style="margin-left:auto;display:flex;align-items:center;gap:0.5rem">
-          <button onclick="clearCompare()" style="font-size:0.8rem;color:#94a3b8;background:none;border:none;cursor:pointer;padding:0.5rem">Xóa</button>
-          <button onclick="showCompareView()" ${compareList.length < 2 ? 'disabled' : ''} style="background:${compareList.length < 2 ? '#e2e8f0' : '#2563eb'};color:${compareList.length < 2 ? '#94a3b8' : '#fff'};border:none;border-radius:10px;padding:0.5rem 1.25rem;font-size:0.82rem;font-weight:700;cursor:${compareList.length < 2 ? 'not-allowed' : 'pointer'};transition:all 0.15s">Xem so sánh</button>
-        </div>
-      </div>`;
-  }
-
-  function showCompareView() {
-    if (compareList.length !== 2) return;
-    switchTab('catalog');
-    renderCatalogCompare();
-  }
-
-  function renderCatalogCompare() {
-    const products = typeof TapoProducts !== 'undefined' ? TapoProducts : [];
-    const items = compareList.map(id => products.find(p => p.id === id));
-    if (items.length !== 2 || !items[0] || !items[1]) return;
-    const [a, b] = items;
-    const keys = [...Object.keys(a.specs)];
-    Object.keys(b.specs).forEach(k => { if (!keys.includes(k)) keys.push(k); });
-
-    const rowsHTML = keys.map(key => {
-      const va = a.specs[key] || '—', vb = b.specs[key] || '—';
-      const diff = va !== vb;
-      return `<div style="display:grid;grid-template-columns:160px 1fr 1fr;gap:1rem;padding:0.75rem 1rem;border-bottom:1px solid #f1f5f9;${diff ? 'background:#fffbeb;border-radius:8px;margin:0 -4px;' : ''}">
-        <div style="font-size:0.8rem;font-weight:600;color:#374151">${key}</div>
-        <div style="font-size:0.8rem;color:#64748b">${va}</div>
-        <div style="font-size:0.8rem;color:#64748b">${vb}</div>
-      </div>`;
-    }).join('');
-
-    const productHeader = (p) => `<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:1.25rem">
-      <img src="${p.image}" alt="${p.name}" style="width:80px;height:80px;object-fit:cover;border-radius:12px;border:1.5px solid #e8edf5;margin-bottom:0.75rem">
-      <div style="font-weight:700;color:#1e293b;font-size:0.9rem">${p.name}</div>
-      <div style="font-size:0.72rem;color:#64748b;margin-top:0.25rem">${p.category}</div>
-    </div>`;
-
-    document.getElementById('tab-catalog').innerHTML = `
-      <button onclick="renderCatalogList()" style="margin-bottom:1.5rem;display:inline-flex;align-items:center;gap:0.5rem;font-size:0.82rem;font-weight:600;color:#64748b;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.5rem 1rem;cursor:pointer;transition:all 0.15s"
-        onmouseover="this.style.borderColor='#93c5fd';this.style.color='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b'">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        Quay lại danh sách
-      </button>
-      <div style="overflow-x:auto">
-        <div style="min-width:580px;background:#fff;border-radius:16px;border:1.5px solid #e8edf5;overflow:hidden">
-          <div style="display:grid;grid-template-columns:160px 1fr 1fr;border-bottom:1.5px solid #e8edf5;background:#f8fafc">
-            <div></div>
-            ${productHeader(a)}
-            ${productHeader(b)}
-          </div>
-          <div style="padding:0.5rem 1rem 1rem">${rowsHTML}</div>
-        </div>
-      </div>
-      <p style="font-size:0.75rem;color:#94a3b8;margin-top:1rem;text-align:center">Dòng tô vàng là thông số khác nhau giữa 2 sản phẩm.</p>`;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function renderCatalogDetail(productId) {
-    const products = typeof TapoProducts !== 'undefined' ? TapoProducts : [];
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
-
-    let specsHTML = '';
-    for (const [key, value] of Object.entries(product.specs)) {
-      specsHTML += `<div class="spec-row"><div class="spec-key">${key}</div><div class="spec-val">${value}</div></div>`;
-    }
-
-    document.getElementById('tab-catalog').innerHTML = `
-      <button onclick="renderCatalogList()" style="margin-bottom:1.5rem;display:inline-flex;align-items:center;gap:0.5rem;font-size:0.82rem;font-weight:600;color:#64748b;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.5rem 1rem;cursor:pointer;transition:all 0.15s"
-        onmouseover="this.style.borderColor='#93c5fd';this.style.color='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b'">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        Quay lại danh sách
-      </button>
-      <div class="card" style="overflow:hidden;margin-bottom:1.5rem">
-        <div style="display:flex;flex-direction:column;gap:0">
-          <div style="background:linear-gradient(135deg,#f0f4ff,#e0eaff);padding:2rem;display:flex;align-items:center;justify-content:center;min-height:220px">
-            <img src="${product.image}" alt="${product.name}" style="max-width:280px;width:100%;border-radius:12px;box-shadow:0 8px 24px rgba(37,99,235,0.15);transition:transform 0.3s" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
-          </div>
-          <div style="padding:1.75rem">
-            <div style="display:inline-block;background:var(--blue-50);color:var(--blue-700);font-size:0.72rem;font-weight:700;padding:0.25rem 0.75rem;border-radius:999px;border:1px solid var(--blue-200);margin-bottom:0.875rem">${product.category}</div>
-            <h1 style="font-size:1.625rem;font-weight:800;color:#0f172a;letter-spacing:-0.03em;margin:0 0 0.75rem;line-height:1.2">${product.name}</h1>
-            <p style="color:#64748b;font-size:0.9rem;line-height:1.65;margin:0 0 1.5rem">${product.shortDesc}</p>
-            <div style="display:flex;flex-wrap:wrap;gap:0.75rem">
-              <button style="display:inline-flex;align-items:center;gap:0.5rem;background:#2563eb;color:#fff;border:none;border-radius:10px;padding:0.625rem 1.25rem;font-size:0.85rem;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(37,99,235,0.3);transition:all 0.15s"
-                onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Tải Datasheet
-              </button>
-              <button onclick="copyToClipboard('${product.name}')" style="display:inline-flex;align-items:center;gap:0.5rem;background:#fff;color:#374151;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.625rem 1.25rem;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.15s"
-                onmouseover="this.style.borderColor='#93c5fd';this.style.color='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#374151'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                Copy tên SP
-              </button>
-            </div>
-            ${product.video ? `<div style="margin-top:1.125rem">
-              <a href="${product.video}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.82rem;font-weight:700;color:#dc2626;background:#fff1f0;border:1.5px solid #fecaca;border-radius:10px;padding:0.5rem 1rem;text-decoration:none;transition:all 0.15s"
-                onmouseover="this.style.background='#dc2626';this.style.color='#fff'" onmouseout="this.style.background='#fff1f0';this.style.color='#dc2626'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/></svg>
-                Xem video hướng dẫn
-              </a>
-            </div>` : ''}
-          </div>
-        </div>
-      </div>
-      <div class="card" style="padding:1.75rem">
-        <h2 style="font-size:1.1rem;font-weight:800;color:#0f172a;margin:0 0 1.25rem;display:flex;align-items:center;gap:0.625rem">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-          Thông số kỹ thuật chi tiết
-        </h2>
-        <div style="padding:0 0.75rem">${specsHTML}</div>
-      </div>`;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function copyToClipboard(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(() => showToast('Đã copy tên sản phẩm!')).catch(() => copyFallback(text));
-    } else { copyFallback(text); }
-  }
-  function copyFallback(text) {
-    const ta = document.createElement('textarea');
-    ta.value = text; ta.style.cssText = 'position:fixed;left:-999999px;top:-999999px';
-    document.body.appendChild(ta); ta.focus(); ta.select();
-    try { document.execCommand('copy'); showToast('Đã copy tên sản phẩm!'); } catch(e) {}
-    ta.remove();
-  }
+  // Catalog functions đã được tách sang tabs/catalog.html
+  // Giao tiếp qua postMessage (xem listener ở phần INIT bên dưới)
 
   function showToast(message) {
     const toast = document.createElement('div');
@@ -940,18 +687,38 @@
       setTimeout(() => { if (r.link) window.open(r.link, '_blank', 'noopener'); }, 100);
     } else if (r.tab === 'catalog') {
       switchTab('catalog');
-      setTimeout(() => renderCatalogDetail(r.productId), 80);
+      setTimeout(() => {
+        const iframe = document.getElementById('catalog-iframe');
+        if (iframe && iframe.contentWindow) {
+          iframe.contentWindow.postMessage({ type: 'catalog-show-detail', productId: r.productId }, '*');
+        }
+      }, 80);
     }
   }
 
   // ================================================================
   // INIT
   // ================================================================
-  // Auto-resize iframe tab Lưu trữ & Data
+  // Auto-resize iframe các tab đã tách
   window.addEventListener('message', function(e) {
     if (e.data && e.data.type === 'calc-height') {
       const iframe = document.getElementById('calculator-iframe');
       if (iframe) iframe.style.height = (e.data.height + 24) + 'px';
+    }
+    if (e.data && e.data.type === 'catalog-height') {
+      const iframe = document.getElementById('catalog-iframe');
+      if (iframe) {
+        // Thêm 8px buffer để tránh scrollbar xuất hiện
+        const newH = (e.data.height + 8) + 'px';
+        if (iframe.style.height !== newH) iframe.style.height = newH;
+      }
+    }
+    if (e.data && e.data.type === 'catalog-scroll-top') {
+      const iframe = document.getElementById('catalog-iframe');
+      if (iframe) {
+        const offsetTop = iframe.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: Math.max(0, offsetTop), behavior: 'smooth' });
+      }
     }
   });
 
@@ -961,6 +728,168 @@
   renderAuthorizedCenters();
   switchTab(activeTab);
   lucide.createIcons();
+</script>
+
+<!-- ==========================================
+     THANH SO SÁNH NỔI — fixed trên viewport thật
+========================================== -->
+<div id="global-compare-bar" style="
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 99999;
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+  box-shadow: 0 -6px 32px rgba(29,78,216,0.4), 0 -1px 0 rgba(255,255,255,0.1);
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+  font-family: 'Inter', sans-serif;
+  display: none;
+"></div>
+
+<style>
+  #global-compare-bar.gcb-visible {
+    transform: translateY(0) !important;
+    display: block !important;
+  }
+  .gcb-chip {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: rgba(255,255,255,0.14);
+    border: 1.5px solid rgba(255,255,255,0.22);
+    border-radius: 10px;
+    padding: 0.3rem 0.4rem 0.3rem 0.625rem;
+    flex-shrink: 0;
+  }
+  .gcb-chip span {
+    font-size: 0.78rem; font-weight: 600; color: #fff;
+    max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .gcb-chip button {
+    color: rgba(255,255,255,0.55); background: none; border: none;
+    cursor: pointer; padding: 2px; line-height: 0; flex-shrink: 0;
+    transition: color 0.15s; border-radius: 4px;
+  }
+  .gcb-chip button:hover { color: #fff; background: rgba(255,255,255,0.15); }
+  .gcb-placeholder {
+    font-size: 0.78rem; color: rgba(255,255,255,0.45); font-style: italic;
+    flex-shrink: 0; padding: 0.3rem 0.75rem;
+    border: 1.5px dashed rgba(255,255,255,0.22); border-radius: 10px;
+  }
+  .gcb-btn-compare {
+    background: #fff; color: #1d4ed8; border: none; border-radius: 10px;
+    padding: 0.55rem 1.35rem; font-size: 0.82rem; font-weight: 800;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18); letter-spacing: -0.01em;
+  }
+  .gcb-btn-compare:hover { background: #eff6ff; transform: scale(1.04); box-shadow: 0 4px 20px rgba(0,0,0,0.22); }
+  .gcb-btn-compare:disabled {
+    background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.38);
+    cursor: not-allowed; transform: none; box-shadow: none;
+  }
+  .gcb-btn-clear {
+    font-size: 0.78rem; color: rgba(255,255,255,0.55); background: none;
+    border: none; cursor: pointer; padding: 0.4rem 0.5rem; transition: color 0.15s;
+    white-space: nowrap;
+  }
+  .gcb-btn-clear:hover { color: #fff; }
+  @media (max-width: 600px) {
+    .gcb-label { display: none !important; }
+    .gcb-chip span { max-width: 72px !important; }
+    .gcb-placeholder { display: none; }
+  }
+</style>
+
+<script>
+  // ================================================================
+  // THANH SO SÁNH TOÀN CỤC (index.html nhận dữ liệu từ iframe)
+  // ================================================================
+  let gcbItems = []; // [{id, name, image}, ...]
+
+  function renderGlobalCompareBar() {
+    const bar = document.getElementById('global-compare-bar');
+    if (!bar) return;
+
+    if (gcbItems.length === 0) {
+      bar.classList.remove('gcb-visible');
+      setTimeout(() => { if (gcbItems.length === 0) bar.style.display = 'none'; }, 350);
+      return;
+    }
+
+    bar.style.display = 'block';
+    requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.add('gcb-visible')));
+
+    const chipsHTML = gcbItems.map(p => `
+      <div class="gcb-chip">
+        <img src="${p.image}" style="width:28px;height:28px;object-fit:cover;border-radius:6px;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.28)">
+        <span>${p.name}</span>
+        <button onclick="gcbRemove('${p.id}')" title="Xóa">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>`).join('');
+
+    const placeholder = gcbItems.length < 2 ? `<span class="gcb-placeholder">+ 1 SP cùng loại</span>` : '';
+    const ready = gcbItems.length >= 2;
+
+    bar.innerHTML = `
+      <div style="max-width:1100px;margin:0 auto;padding:0.7rem 1.25rem;display:flex;flex-wrap:wrap;align-items:center;gap:0.625rem;overflow-x:auto">
+        <span class="gcb-label" style="font-size:0.8rem;font-weight:700;color:rgba(255,255,255,0.82);display:flex;align-items:center;gap:0.375rem;flex-shrink:0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          So sánh (${gcbItems.length}/2)
+        </span>
+        ${chipsHTML}
+        ${placeholder}
+        <div style="margin-left:auto;display:flex;align-items:center;gap:0.5rem;flex-shrink:0">
+          <button class="gcb-btn-clear" onclick="gcbClear()">Xóa tất cả</button>
+          <button class="gcb-btn-compare" onclick="gcbDoCompare()" ${ready ? '' : 'disabled'}>
+            ${ready ? '⚡ Xem so sánh' : 'Chọn thêm 1 SP'}
+          </button>
+        </div>
+      </div>`;
+  }
+
+  function gcbRemove(id) {
+    const iframe = document.getElementById('catalog-iframe');
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage({ type: 'catalog-remove-compare', id }, '*');
+    }
+  }
+
+  function gcbClear() {
+    const iframe = document.getElementById('catalog-iframe');
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage({ type: 'catalog-clear-compare' }, '*');
+    }
+    gcbItems = [];
+    renderGlobalCompareBar();
+  }
+
+  function gcbDoCompare() {
+    if (gcbItems.length < 2) return;
+    // Scroll đến iframe catalog trước
+    const iframe = document.getElementById('catalog-iframe');
+    if (iframe) {
+      const top = iframe.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    }
+    // Ra lệnh iframe hiển thị bảng so sánh
+    setTimeout(() => {
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'catalog-do-compare' }, '*');
+      }
+    }, 300);
+  }
+
+  // Lắng nghe update từ iframe
+  // (gộp vào handler message đã có bên trên)
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'catalog-compare-update') {
+      gcbItems = e.data.items || [];
+      renderGlobalCompareBar();
+    }
+    if (e.data && e.data.type === 'catalog-compare-hide') {
+      // Ẩn thanh khi iframe đang hiển thị bảng so sánh
+      const bar = document.getElementById('global-compare-bar');
+      if (bar) { bar.classList.remove('gcb-visible'); setTimeout(() => { bar.style.display = 'none'; }, 350); }
+    }
+  });
 </script>
 </body>
 </html>
