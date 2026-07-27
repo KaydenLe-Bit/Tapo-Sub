@@ -131,20 +131,16 @@
     <div id="page-content">
 
       <!-- ===== FAQ TAB ===== -->
+      <!-- Nội dung đã tách ra: tabs/faq.html -->
       <div id="tab-faq" class="fade-in">
-        <div class="page-header">
-          <div class="page-eyebrow">
-            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-            Hỗ trợ kỹ thuật
-          </div>
-          <h1 class="page-title">Các vấn đề thường gặp</h1>
-          <p class="page-sub">Tìm kiếm nhanh lỗi, cách xử lý và hướng dẫn cho từng thiết bị.</p>
-        </div>
-        <div class="search-wrap" style="max-width:560px">
-          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input type="text" id="faq-search" class="search-input" placeholder="Tìm theo mã lỗi, tên thiết bị..." oninput="filterFaqs()">
-        </div>
-        <div id="faq-list"></div>
+        <iframe
+          id="faq-iframe"
+          src="tabs/faq.html"
+          style="width:100%;border:none;display:block;min-height:600px;transition:height 0.2s ease"
+          scrolling="no"
+          loading="lazy"
+          title="Vấn Đề Thường Gặp"
+        ></iframe>
       </div>
 
       <!-- ===== CATALOG TAB ===== -->
@@ -346,7 +342,7 @@
   // STATE
   // ================================================================
   let activeTab = 'faq';
-  let expandedFaq = null;
+  // expandedFaq đã chuyển vào tabs/faq.html
   // currentCatalogSearchQuery & compareList đã chuyển vào tabs/catalog.html
 
   const TAB_TITLES = {
@@ -425,14 +421,15 @@
     const titleEl = document.getElementById('topbar-page-title');
     if (titleEl) titleEl.innerHTML = TAB_TITLES[tab] || '';
 
-    // Tab catalog đã tách sang tabs/catalog.html (iframe tự render)
-    if (tab !== 'catalog') {
+    // Tab catalog và faq đã tách sang iframe (tự render)
+    if (tab !== 'catalog' && tab !== 'faq') {
       lucide.createIcons();
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  // FAQ functions đã được tách sang tabs/faq.html
   // Catalog functions đã được tách sang tabs/catalog.html
   // Giao tiếp qua postMessage (xem listener ở phần INIT bên dưới)
 
@@ -445,47 +442,9 @@
   }
 
   // ================================================================
-  // FAQ
+  // FAQ — Đã tách sang tabs/faq.html
+  // Giao tiếp qua postMessage (xem listener ở phần INIT bên dưới)
   // ================================================================
-  function filterFaqs() {
-    const term = document.getElementById('faq-search').value.toLowerCase();
-    const data = typeof faqsData !== 'undefined' ? faqsData : [];
-    const filtered = data.filter(f => f.question.toLowerCase().includes(term) || f.model.toLowerCase().includes(term));
-    renderFaqs(filtered, term);
-  }
-
-  function renderFaqs(faqs, term) {
-    const container = document.getElementById('faq-list');
-    if (faqs.length === 0) {
-      container.innerHTML = `<div style="text-align:center;padding:3rem 1rem;background:#fff;border-radius:16px;border:1.5px dashed #e2e8f0"><p style="color:#94a3b8;margin:0">Không tìm thấy kết quả cho "${term || ''}"</p></div>`;
-      return;
-    }
-    container.innerHTML = faqs.map((faq, i) => `
-      <div class="faq-card ${expandedFaq === i ? 'open' : ''}">
-        <button class="faq-trigger" onclick="toggleFaq(${i})">
-          <div style="text-align:left">
-            <div class="faq-model-badge">${faq.model}</div>
-            <div class="faq-question">${faq.question}</div>
-          </div>
-          <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        ${expandedFaq === i ? `
-        <div class="faq-answer">
-          <div class="faq-answer-inner">
-            <strong style="display:block;margin-bottom:0.375rem;color:#1e3a8a">Cách xử lý / Giải thích:</strong>
-            ${faq.answer}
-          </div>
-          ${faq.link ? `<div style="margin-top:0.875rem">
-            <a href="${faq.link}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.8rem;font-weight:700;color:#dc2626;background:#fff1f0;border:1.5px solid #fecaca;border-radius:8px;padding:0.4rem 0.875rem;text-decoration:none">
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/></svg>
-              Xem video hướng dẫn
-            </a>
-          </div>` : ''}
-        </div>` : ''}
-      </div>`).join('');
-  }
-
-  function toggleFaq(i) { expandedFaq = expandedFaq === i ? null : i; filterFaqs(); }
 
   // ================================================================
   // PRODUCTS / VIDEOS
@@ -676,12 +635,15 @@
     closeGlobalSearch();
     if (r.tab === 'faq') {
       switchTab('faq');
-      const input = document.getElementById('faq-search');
-      if (input) { input.value = r.title; filterFaqs(); }
+      // Gửi lệnh search + open vào iframe qua postMessage
       setTimeout(() => {
-        expandedFaq = r.faqIndex; filterFaqs();
-        const cards = document.querySelectorAll('.faq-card');
-        if (cards[0]) cards[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const iframe = document.getElementById('faq-iframe');
+        if (iframe && iframe.contentWindow) {
+          iframe.contentWindow.postMessage({ type: 'faq-search', term: r.title }, '*');
+          setTimeout(() => {
+            iframe.contentWindow.postMessage({ type: 'faq-open', faqIndex: r.faqIndex }, '*');
+          }, 60);
+        }
       }, 80);
     } else if (r.tab === 'products') {
       switchTab('products');
@@ -702,6 +664,13 @@
   // ================================================================
   // Auto-resize iframe các tab đã tách
   window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'faq-height') {
+      const iframe = document.getElementById('faq-iframe');
+      if (iframe) {
+        const newH = (e.data.height + 8) + 'px';
+        if (iframe.style.height !== newH) iframe.style.height = newH;
+      }
+    }
     if (e.data && e.data.type === 'calc-height') {
       const iframe = document.getElementById('calculator-iframe');
       if (iframe) iframe.style.height = (e.data.height + 24) + 'px';
@@ -723,7 +692,7 @@
     }
   });
 
-  filterFaqs();
+  // filterFaqs() đã chuyển vào tabs/faq.html (tự gọi khi load)
   filterProducts();
   initWarrantyCheck();
   renderAuthorizedCenters();
