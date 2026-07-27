@@ -35,7 +35,7 @@
       <img src="https://static.tapo.com/res/new-home/tapo.svg?v=202410101530" alt="Logo" loading="lazy"
            onerror="this.style.background='#1e40af';this.alt='K'">
       <div class="brand">Support Portal</div>
-      <a href="https://www.youtube.com/@Kayden" target="_blank" rel="noopener noreferrer"
+      <a href="https://www.youtube.com/@tplinkvietnamofficial/shorts" target="_blank" rel="noopener noreferrer"
          class="ml-auto text-red-400 hover:text-red-300 transition-colors" title="YouTube">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
           <path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/>
@@ -53,7 +53,7 @@
       <div class="sidebar-section-label">Công cụ</div>
       <button onclick="switchTab('faq')" id="nav-faq" class="sidebar-nav-btn">
         <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
-        Câu Hỏi Thường Gặp
+        Vấn Đề Thường Gặp
       </button>
       <button onclick="switchTab('catalog')" id="nav-catalog" class="sidebar-nav-btn">
         <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
@@ -61,7 +61,7 @@
       </button>
       <button onclick="switchTab('products')" id="nav-products" class="sidebar-nav-btn">
         <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></span>
-        Hướng Dẫn & Hỗ Trợ
+        Video Hướng Dẫn
       </button>
       <button onclick="switchTab('calculator')" id="nav-calculator" class="sidebar-nav-btn">
         <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg></span>
@@ -282,13 +282,13 @@
       <div class="nav-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
       </div>
-      Hỗ trợ
+      FAQ
     </button>
     <button onclick="switchTab('catalog')" id="mnav-catalog" class="mobile-nav-item">
       <div class="nav-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
       </div>
-      Thông số
+      Thư Viện
     </button>
     <button onclick="switchTab('products')" id="mnav-products" class="mobile-nav-item">
       <div class="nav-icon">
@@ -350,7 +350,7 @@
   // currentCatalogSearchQuery & compareList đã chuyển vào tabs/catalog.html
 
   const TAB_TITLES = {
-    faq: '<span>Hỗ trợ</span> & Lỗi',
+    faq: 'Tổng Hợp Các Vấn Đề Thường Gặp',
     catalog: 'Tra cứu <span>Thông số</span>',
     products: '<span>Video</span> Hướng Dẫn Tapo',
     calculator: '<span>Lưu trữ</span> & Data',
