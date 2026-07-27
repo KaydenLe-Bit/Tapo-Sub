@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vấn Đề Thường Gặp</title>
+
+  <!-- FAQ DATA FILE -->
+  <script src="../data/faq.js"></script>
+
+  <!-- External Libraries -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap&subset=vietnamese" rel="stylesheet">
+
+  <link rel="stylesheet" href="../styles.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0;
+      background: transparent;
+      overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    #faq-root { padding: 0; }
+
+    /* ── HEADER ── */
+    .faq-hero {
+      padding: 2rem 0 1.75rem;
+    }
+    .faq-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #2563eb;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 4px 12px;
+      margin-bottom: 1rem;
+    }
+    .faq-hero h1 {
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 0.5rem;
+      line-height: 1.2;
+    }
+    .faq-hero p {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* ── SEARCH ── */
+    .search-shell {
+      position: relative;
+      max-width: 520px;
+      margin: 0 0 0.75rem;
+    }
+    .search-shell svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      pointer-events: none;
+      width: 16px; height: 16px;
+    }
+    .search-shell input {
+      width: 100%;
+      padding: 11px 14px 11px 42px;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      color: #0f172a;
+      background: #fff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      outline: none;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    .search-shell input::placeholder { color: #94a3b8; }
+    .search-shell input:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 3px #dbeafe;
+    }
+    #faq-count {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── CATEGORY FILTER PILLS ── */
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+    .filter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1.5px solid #e2e8f0;
+      background: #fff;
+      color: #475569;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    .filter-pill:hover {
+      border-color: #93c5fd;
+      color: #1d4ed8;
+      background: #eff6ff;
+    }
+    .filter-pill.active {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      color: #fff;
+    }
+    .filter-pill .pill-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      background: rgba(255,255,255,0.25);
+      color: inherit;
+    }
+    .filter-pill:not(.active) .pill-count {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    /* ── FAQ LIST ── */
+    #faq-list { display: flex; flex-direction: column; gap: 10px; }
+
+    /* ── FAQ CARD ── */
+    .faq-card {
+      background: #fff;
+      border: 1.5px solid #e8edf4;
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    .faq-card:hover {
+      border-color: #bfdbfe;
+      box-shadow: 0 2px 12px rgba(59,130,246,.07);
+    }
+    .faq-card.open {
+      border-color: #93c5fd;
+      box-shadow: 0 4px 20px rgba(59,130,246,.10);
+    }
+
+    .faq-trigger {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px 18px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+    }
+    .faq-trigger:focus-visible {
+      outline: 2px solid #3b82f6;
+      outline-offset: -2px;
+    }
+
+    .faq-trigger-left { flex: 1; min-width: 0; }
+
+    /* model badge */
+    .faq-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+      white-space: nowrap;
+    }
+
+    /* badge color variants */
+    .badge-blue   { background:#dbeafe; color:#1d4ed8; }
+    .badge-green  { background:#dcfce7; color:#15803d; }
+    .badge-amber  { background:#fef3c7; color:#b45309; }
+    .badge-red    { background:#fee2e2; color:#b91c1c; }
+    .badge-purple { background:#ede9fe; color:#7c3aed; }
+    .badge-teal   { background:#ccfbf1; color:#0f766e; }
+    .badge-gray   { background:#f1f5f9; color:#475569; }
+    .badge-rose   { background:#ffe4e6; color:#be123c; }
+
+    .faq-question {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #1e293b;
+      line-height: 1.5;
+    }
+
+    /* chevron */
+    .faq-chevron {
+      flex-shrink: 0;
+      width: 20px; height: 20px;
+      color: #94a3b8;
+      transition: transform .22s ease, color .18s;
+    }
+    .faq-card.open .faq-chevron {
+      transform: rotate(180deg);
+      color: #3b82f6;
+    }
+
+    /* ── ANSWER PANEL ── */
+    .faq-answer {
+      border-top: 1.5px solid #f0f5ff;
+      padding: 0 18px 18px;
+      animation: slideDown .2s ease;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .answer-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #3b82f6;
+      padding: 14px 0 10px;
+    }
+    .answer-label svg { width:13px; height:13px; }
+
+    .answer-body {
+      font-size: 0.875rem;
+      color: #334155;
+      line-height: 1.75;
+      white-space: pre-line;
+    }
+
+    /* step-list: lines starting with 1. 2. 3. rendered as styled steps */
+    .step-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: #eff6ff;
+      border: 1.5px solid #bfdbfe;
+      color: #2563eb;
+      font-size: 0.68rem;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 2px;
+    }
+    .step-text { font-size: 0.875rem; color: #334155; line-height: 1.7; }
+
+    /* video link */
+    .video-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 14px;
+      padding: 7px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #dc2626;
+      background: #fff1f2;
+      border: 1.5px solid #fecdd3;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background .15s, border-color .15s;
+    }
+    .video-btn:hover {
+      background: #ffe4e6;
+      border-color: #fca5a5;
+    }
+    .video-btn svg { width:15px; height:15px; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 3.5rem 1rem;
+      background: #fff;
+      border-radius: 16px;
+      border: 1.5px dashed #e2e8f0;
+    }
+    .empty-state svg { color: #cbd5e1; margin-bottom: 12px; }
+    .empty-state p { color: #94a3b8; margin: 0; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+<div id="faq-root">
+
+  <!-- HEADER -->
+  <div class="faq-hero">
+    <div class="faq-eyebrow">
+      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      Hỗ trợ kỹ thuật
+    </div>
+    <h1>Các vấn đề thường gặp</h1>
+    <p>Tìm nhanh lỗi, hướng dẫn xử lý và video cho từng thiết bị.</p>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-shell">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="faq-search" placeholder="Tìm theo mã lỗi, tên thiết bị, triệu chứng..." oninput="onSearch()">
+  </div>
+  <div id="faq-count"></div>
+
+  <!-- CATEGORY FILTER -->
+  <div class="filter-row" id="filter-row"></div>
+
+  <!-- LIST -->
+  <div id="faq-list"></div>
+
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────
+let expandedFaq   = null;
+let activeFilter  = 'all';
+
+// ── BADGE COLOR MAP ────────────────────────────────────────────────────────
+const BADGE_COLORS = {
+  'ALL Model':              'badge-blue',
+  'Camera WiFi':            'badge-teal',
+  'Camera':                 'badge-teal',
+  'NVR/Đầu ghi':           'badge-purple',
+  'Smartlock':              'badge-green',
+  'DL06':                   'badge-green',
+  'DL06&DL06 Pro':          'badge-green',
+  'DL50FVS':                'badge-green',
+  'Lỗi mạng/WiFi':         'badge-amber',
+  'Lỗi hình ảnh/lưu trữ': 'badge-amber',
+  'Lỗi tính năng camera':  'badge-red',
+  'Lỗi App điều khiển':    'badge-red',
+  'Lỗi thiết bị':          'badge-rose',
+};
+function badgeClass(model) {
+  return BADGE_COLORS[model] || 'badge-gray';
+}
+
+// ── FILTER PILLS ───────────────────────────────────────────────────────────
+function buildFilters(data) {
+  const counts = {};
+  data.forEach(f => { counts[f.model] = (counts[f.model] || 0) + 1; });
+  const row = document.getElementById('filter-row');
+  const total = data.length;
+
+  const pills = [{ label: 'Tất cả', key: 'all', count: total }];
+  Object.entries(counts).forEach(([k,v]) => pills.push({ label: k, key: k, count: v }));
+
+  row.innerHTML = pills.map(p => `
+    <button class="filter-pill ${activeFilter === p.key ? 'active' : ''}"
+            onclick="setFilter('${p.key.replace(/'/g,"\\'")}')">
+      ${p.label}
+      <span class="pill-count">${p.count}</span>
+    </button>`).join('');
+}
+
+function setFilter(key) {
+  activeFilter  = key;
+  expandedFaq   = null;
+  render();
+}
+
+// ── SEARCH ─────────────────────────────────────────────────────────────────
+function onSearch() {
+  expandedFaq  = null;
+  activeFilter = 'all';
+  render();
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────────────
+function getFiltered() {
+  const term = document.getElementById('faq-search').value.toLowerCase().trim();
+  const data = typeof faqsData !== 'undefined' ? faqsData : [];
+  return data.filter(f => {
+    const matchCat  = activeFilter === 'all' || f.model === activeFilter;
+    const matchTerm = !term ||
+      f.question.toLowerCase().includes(term) ||
+      f.model.toLowerCase().includes(term) ||
+      f.answer.toLowerCase().includes(term);
+    return matchCat && matchTerm;
+  });
+}
+
+function formatAnswer(text) {
+  const lines = text.split('\n');
+  let html = '';
+  lines.forEach(line => {
+    const m = line.match(/^(\d+)\.\s+(.+)/);
+    if (m) {
+      html += `<div class="step-item">
+        <div class="step-num">${m[1]}</div>
+        <div class="step-text">${m[2]}</div>
+      </div>`;
+    } else if (line.trim()) {
+      html += `<p style="margin:0 0 6px">${line}</p>`;
+    }
+  });
+  return html;
+}
+
+function render() {
+  const faqs = getFiltered();
+  const term = document.getElementById('faq-search').value.trim();
+  const data = typeof faqsData !== 'undefined' ? faqsData : [];
+
+  // rebuild filter pills (only on full data, not filtered)
+  buildFilters(data);
+
+  // count label
+  const countEl = document.getElementById('faq-count');
+  if (term || activeFilter !== 'all') {
+    countEl.textContent = faqs.length
+      ? `Hiển thị ${faqs.length} / ${data.length} kết quả`
+      : '';
+  } else {
+    countEl.textContent = `${data.length} vấn đề`;
+  }
+
+  const container = document.getElementById('faq-list');
+
+  if (faqs.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <p>Không tìm thấy kết quả cho <strong>"${term || activeFilter}"</strong></p>
+      </div>`;
+    notifyHeight(); return;
+  }
+
+  container.innerHTML = faqs.map((faq, i) => {
+    const isOpen = expandedFaq === i;
+    return `
+    <div class="faq-card ${isOpen ? 'open' : ''}">
+      <button class="faq-trigger" onclick="toggleFaq(${i})" aria-expanded="${isOpen}">
+        <div class="faq-trigger-left">
+          <div class="faq-badge ${badgeClass(faq.model)}">${faq.model}</div>
+          <div class="faq-question">${faq.question}</div>
+        </div>
+        <svg class="faq-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      ${isOpen ? `
+      <div class="faq-answer">
+        <div class="answer-label">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Cách xử lý / Giải thích
+        </div>
+        <div class="answer-body">${formatAnswer(faq.answer)}</div>
+        ${faq.link ? `
+        <a href="${faq.link}" target="_blank" rel="noopener noreferrer" class="video-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/></svg>
+          Xem video hướng dẫn
+        </a>` : ''}
+      </div>` : ''}
+    </div>`;
+  }).join('');
+
+  notifyHeight();
+}
+
+function toggleFaq(i) {
+  expandedFaq = expandedFaq === i ? null : i;
+  render();
+}
+
+// ── POST MESSAGE ───────────────────────────────────────────────────────────
+function notifyHeight() {
+  const h = document.getElementById('faq-root').scrollHeight;
+  window.parent.postMessage({ type: 'faq-height', height: h }, '*');
+}
+
+window.addEventListener('message', function(e) {
+  if (!e.data) return;
+  if (e.data.type === 'faq-search') {
+    const input = document.getElementById('faq-search');
+    if (input) { input.value = e.data.term || ''; activeFilter = 'all'; render(); }
+  }
+  if (e.data.type === 'faq-open') {
+    expandedFaq = e.data.faqIndex;
+    render();
+    setTimeout(() => {
+      const cards = document.querySelectorAll('.faq-card');
+      if (cards[0]) cards[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      notifyHeight();
+    }, 60);
+  }
+});
+
+if (typeof ResizeObserver !== 'undefined') {
+  new ResizeObserver(() => notifyHeight()).observe(document.getElementById('faq-root'));
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
