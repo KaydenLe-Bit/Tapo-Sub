@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tra cứu Thông số - Tapo</title>
+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap&subset=vietnamese" rel="stylesheet">
+  <script src="../data/data.js"></script>
+  <link rel="stylesheet" href="../styles.css">
+
+  <style>
+    /* ── Reset iframe context ── */
+    html { overflow-x: hidden; }
+    html, body {
+      margin: 0; padding: 0;
+      background: transparent;
+    }
+    body { font-family: 'Inter', sans-serif; color: #1f2937; }
+
+    /* Padding khi có compare bar (bar nằm ở parent, không cần nhiều) */
+    #catalog-root {
+      padding-bottom: 4px;
+    }
+
+    /* FIX 2: Compare view mobile — layout dọc thay vì bảng ngang cứng */
+    .compare-mobile-card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1.5px solid #e8edf5;
+      overflow: hidden;
+    }
+
+    /* Header 2 sản phẩm side-by-side trên desktop, dọc trên mobile */
+    .compare-header-grid {
+      display: grid;
+      grid-template-columns: 140px 1fr 1fr;
+      border-bottom: 1.5px solid #e8edf5;
+      background: #f8fafc;
+    }
+    .compare-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 1fr;
+      gap: 0;
+      padding: 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .compare-row.diff { background: #fffbeb; }
+    .compare-row-key {
+      font-size: 0.78rem; font-weight: 600; color: #374151;
+      padding: 0.7rem 0.875rem;
+      border-right: 1px solid #f1f5f9;
+      display: flex; align-items: center;
+    }
+    .compare-row-val {
+      font-size: 0.78rem; color: #64748b;
+      padding: 0.7rem 0.875rem;
+      display: flex; align-items: center;
+    }
+    .compare-row-val + .compare-row-val {
+      border-left: 1px solid #f1f5f9;
+    }
+
+    /* Mobile: ẩn label cột, mỗi row thành block */
+    @media (max-width: 600px) {
+      .compare-header-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .compare-header-grid .compare-header-spacer { display: none; }
+
+      .compare-row {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+      }
+      .compare-row-key {
+        grid-column: 1;
+        background: #f8fafc;
+        font-size: 0.72rem;
+        padding: 0.5rem 0.875rem;
+        border-right: none;
+        border-bottom: 1px solid #f1f5f9;
+        color: #94a3b8;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .compare-row-val {
+        padding: 0.5rem 0.875rem;
+        font-size: 0.82rem;
+        border: none;
+      }
+      .compare-row-val + .compare-row-val {
+        border-left: none;
+        border-top: 1px dashed #e2e8f0;
+      }
+      /* Gắn nhãn A/B cho từng value */
+      .compare-row-val::before {
+        content: attr(data-label);
+        display: inline-block;
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: #94a3b8;
+        margin-right: 0.5rem;
+        min-width: 1rem;
+      }
+    }
+
+    /* Compare bar mobile: thu gọn */
+    @media (max-width: 600px) {
+      .compare-bar-label { display: none; }
+      .compare-item-name { max-width: 80px !important; }
+    }
+
+    /* ── CATALOG CARD — redesign với ảnh vuông ── */
+    .catalog-card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1.5px solid #e8edf5;
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .catalog-card:hover {
+      box-shadow: 0 8px 32px rgba(37,99,235,0.12);
+      transform: translateY(-3px);
+      border-color: #bfdbfe;
+    }
+
+    /* Ô ảnh vuông — aspect-ratio 1/1 */
+    .catalog-card-img {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: linear-gradient(135deg, #f0f5ff 0%, #e6efff 100%);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .catalog-card-img img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 16px;
+      transition: transform 0.3s;
+    }
+    .catalog-card:hover .catalog-card-img img {
+      transform: scale(1.06);
+    }
+
+    /* Badge danh mục */
+    .cat-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(37,99,235,0.1);
+      color: #1d4ed8;
+      backdrop-filter: blur(6px);
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(37,99,235,0.18);
+      letter-spacing: 0.02em;
+    }
+
+    /* Checkbox so sánh */
+    .compare-label {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(6px);
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.25rem 0.55rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .compare-label:hover { border-color: #93c5fd; color: #2563eb; }
+    .compare-label.selected {
+      background: #eff6ff;
+      border-color: #3b82f6;
+      color: #2563eb;
+    }
+
+    /* Body card */
+    .catalog-card-body {
+      padding: 1rem 1.125rem 1.125rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+      flex: 1;
+    }
+    .catalog-card-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+    .catalog-card-desc {
+      font-size: 0.78rem;
+      color: #64748b;
+      line-height: 1.55;
+      flex: 1;
+    }
+    .catalog-card-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #2563eb;
+      margin-top: 0.5rem;
+      transition: gap 0.2s;
+    }
+    .catalog-card:hover .catalog-card-cta { gap: 8px; }
+  </style>
+</head>
+<body>
+
+<div id="catalog-root"></div>
+
+<script>
+  // ================================================================
+  // STATE
+  // ================================================================
+  let currentCatalogSearchQuery = '';
+  let compareList = [];
+
+  // ================================================================
+  // HEIGHT SYNC
+  // ================================================================
+  function notifyHeight() {
+    // Reset min-height để đo thật
+    const root = document.getElementById('catalog-root');
+    const h = root ? root.scrollHeight : document.body.scrollHeight;
+    window.parent.postMessage({ type: 'catalog-height', height: h }, '*');
+  }
+
+  // Gọi nhiều lần để bắt được sau khi ảnh/font load xong
+  function notifyHeightSeries() {
+    notifyHeight();
+    setTimeout(notifyHeight, 100);
+    setTimeout(notifyHeight, 350);
+    setTimeout(notifyHeight, 800);
+  }
+
+  // Đợi tất cả ảnh trong root load xong rồi mới báo height
+  function notifyHeightAfterImages() {
+    const root = document.getElementById('catalog-root');
+    if (!root) { notifyHeightSeries(); return; }
+    const imgs = Array.from(root.querySelectorAll('img'));
+    if (!imgs.length) { notifyHeightSeries(); return; }
+    let loaded = 0;
+    const check = () => { loaded++; if (loaded >= imgs.length) notifyHeightSeries(); };
+    imgs.forEach(img => {
+      if (img.complete) { check(); }
+      else { img.addEventListener('load', check, { once: true }); img.addEventListener('error', check, { once: true }); }
+    });
+    // Fallback nếu ảnh mãi không load
+    setTimeout(notifyHeightSeries, 1200);
+  }
+
+  // Gửi trạng thái so sánh lên parent để parent render thanh nổi
+  function notifyCompareState() {
+    const products = typeof TapoProducts !== 'undefined' ? TapoProducts : [];
+    const items = compareList.map(id => {
+      const p = products.find(q => q.id === id);
+      return p ? { id: p.id, name: p.name, image: p.image } : null;
+    }).filter(Boolean);
+    window.parent.postMessage({ type: 'catalog-compare-update', items }, '*');
+  }
+
+  // Observer tự động báo khi DOM thay đổi kích thước
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(() => notifyHeight()).observe(document.getElementById('catalog-root') || document.body);
+  }
+
+  // ================================================================
+  // HELPERS
+  // ================================================================
+  function showToast(message) {
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:90px;right:1.25rem;background:#0f172a;color:#fff;padding:0.75rem 1.25rem;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.2);z-index:9999;display:flex;align-items:center;gap:0.625rem;font-size:0.85rem;font-weight:600;';
+    toast.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${message}`;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity='0'; toast.style.transform='translateY(8px)'; toast.style.transition='all 0.3s'; setTimeout(() => toast.remove(), 300); }, 2800);
+  }
+
+  function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => showToast('Đã copy tên sản phẩm!')).catch(() => copyFallback(text));
+    } else { copyFallback(text); }
+  }
+  function copyFallback(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.cssText = 'position:fixed;left:-999999px;top:-999999px';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); showToast('Đã copy tên sản phẩm!'); } catch(e) {}
+    ta.remove();
+  }
+
+  // ================================================================
+  // COMPARE LOGIC
+  // ================================================================
+  function isCompareDisabled(product) {
+    if (compareList.includes(product.id)) return false;
+    if (compareList.length >= 2) return true;
+    if (compareList.length === 1) {
+      const first = (typeof TapoProducts !== 'undefined' ? TapoProducts : []).find(p => p.id === compareList[0]);
+      return first && first.type !== product.type;
+    }
+    return false;
+  }
+
+  function toggleCompare(id, event) {
+    if (event) event.stopPropagation();
+    const idx = compareList.indexOf(id);
+    if (idx > -1) {
+      compareList.splice(idx, 1);
+    } else {
+      const products = typeof TapoProducts !== 'undefined' ? TapoProducts : [];
+      const product = products.find(p => p.id === id);
+      if (compareList.length >= 2) { showToast('Chỉ có thể chọn tối đa 2 sản phẩm'); return; }
+      if (compareList.length === 1) {
+        const first = products.find(p => p.id === compareList[0]);
+        if (first && first.type !== product.type) { showToast('Chỉ so sánh được các sản phẩm cùng loại'); return; }
+      }
+      compareList.push(id);
+    }
+    const onList = !!document.getElementById('catalog-search');
+    if (onList) renderCatalogList(); else renderCompareBar();
+  }
+
+  function clearCompare() {
+    compareList = [];
+    const onList = !!document.getElementById('catalog-search');
+    if (onList) renderCatalogList(); else renderCompareBar();
+  }
+
+  // renderCompareBar giờ chỉ cần thông báo lên parent
+  function renderCompareBar() {
+    notifyCompareState();
+    notifyHeight();
+  }
+
+  function showCompareView() {
+    if (compareList.length !== 2) return;
+    renderCatalogCompare();
+  }
+
+  // ================================================================
+  // COMPARE VIEW — responsive, không dùng min-width cứng
+  // ================================================================
+  function renderCatalogCompare() {
+    const products = typeof TapoProducts !== 'undefined' ? TapoProducts : [];
+    const items = compareList.map(id => products.find(p => p.id === id));
+    if (items.length !== 2 || !items[0] || !items[1]) return;
+    const [a, b] = items;
+    const keys = [...Object.keys(a.specs)];
+    Object.keys(b.specs).forEach(k => { if (!keys.includes(k)) keys.push(k); });
+
+    const rowsHTML = keys.map(key => {
+      const va = a.specs[key] || '—', vb = b.specs[key] || '—';
+      const diff = va !== vb;
+      return `<div class="compare-row${diff ? ' diff' : ''}">
+        <div class="compare-row-key">${key}</div>
+        <div class="compare-row-val" data-label="A">${va}</div>
+        <div class="compare-row-val" data-label="B">${vb}</div>
+      </div>`;
+    }).join('');
+
+    const productHeader = (p, label) => `<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:1rem 0.875rem">
+      <div style="font-size:0.6rem;font-weight:800;color:#94a3b8;letter-spacing:0.1em;margin-bottom:0.5rem">${label}</div>
+      <img src="${p.image}" alt="${p.name}" style="width:72px;height:72px;object-fit:cover;border-radius:12px;border:1.5px solid #e8edf5;margin-bottom:0.625rem">
+      <div style="font-weight:700;color:#1e293b;font-size:0.85rem;line-height:1.3">${p.name}</div>
+      <div style="font-size:0.7rem;color:#64748b;margin-top:0.25rem">${p.category}</div>
+    </div>`;
+
+    const root = document.getElementById('catalog-root');
+
+    // Thông báo parent ẩn thanh so sánh khi đang xem bảng compare
+    window.parent.postMessage({ type: 'catalog-compare-hide' }, '*');
+
+    root.innerHTML = `
+      <button onclick="renderCatalogList()" style="margin-bottom:1.25rem;display:inline-flex;align-items:center;gap:0.5rem;font-size:0.82rem;font-weight:600;color:#64748b;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.5rem 1rem;cursor:pointer;transition:all 0.15s"
+        onmouseover="this.style.borderColor='#93c5fd';this.style.color='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Quay lại danh sách
+      </button>
+      <div class="compare-mobile-card">
+        <div class="compare-header-grid">
+          <div class="compare-header-spacer"></div>
+          ${productHeader(a, 'SẢN PHẨM A')}
+          ${productHeader(b, 'SẢN PHẨM B')}
+        </div>
+        <div style="padding:0.25rem 0">${rowsHTML}</div>
+      </div>
+      <p style="font-size:0.72rem;color:#94a3b8;margin-top:0.875rem;text-align:center">Dòng nền vàng là thông số khác nhau giữa 2 sản phẩm.</p>`;
+
+    // Scroll lên đầu trong iframe và thông báo chiều cao mới cho parent
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    window.parent.postMessage({ type: 'catalog-scroll-top' }, '*');
+    notifyHeightAfterImages();
+  }
+
+  // ================================================================
+  // CATALOG LIST
+  // ================================================================
+  function renderCatalogList() {
+    const container = document.getElementById('catalog-root');
+    const filteredProducts = (typeof TapoProducts !== 'undefined' ? TapoProducts : []).filter(p =>
+      p.name.toLowerCase().includes(currentCatalogSearchQuery.toLowerCase()) ||
+      p.category.toLowerCase().includes(currentCatalogSearchQuery.toLowerCase())
+    );
+
+    let productsHTML = filteredProducts.length === 0 ? `
+      <div style="grid-column:1/-1;text-align:center;padding:4rem 1rem;background:#fff;border-radius:16px;border:1.5px dashed #e2e8f0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 1rem;display:block"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <h3 style="font-size:1rem;font-weight:700;color:#374151;margin:0 0 0.375rem">Không tìm thấy sản phẩm</h3>
+        <p style="color:#94a3b8;font-size:0.85rem;margin:0">Thử từ khóa khác hoặc kiểm tra lại chính tả.</p>
+      </div>` :
+      filteredProducts.map(product => {
+        const isSelected = compareList.includes(product.id);
+        const compareDisabled = isCompareDisabled(product);
+        return `
+        <div onclick="renderCatalogDetail('${product.id}')" class="catalog-card">
+          <div class="catalog-card-img">
+            <img src="${product.image}" alt="${product.name}" loading="lazy">
+            <div class="cat-badge">${product.category}</div>
+            <label onclick="event.stopPropagation()" title="${compareDisabled ? 'Chỉ so sánh cùng loại (tối đa 2)' : ''}"
+              class="compare-label ${isSelected ? 'selected' : ''} ${compareDisabled ? 'opacity-40 cursor-not-allowed' : ''}">
+              <input type="checkbox" style="width:12px;height:12px;accent-color:#2563eb" ${isSelected ? 'checked' : ''} ${compareDisabled ? 'disabled' : ''} onchange="toggleCompare('${product.id}', event)">
+              So sánh
+            </label>
+            ${product.video ? `
+            <a href="${product.video}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"
+               style="position:absolute;bottom:10px;right:10px;display:inline-flex;align-items:center;gap:4px;background:rgba(220,38,38,0.9);backdrop-filter:blur(4px);color:#fff;font-size:0.68rem;font-weight:700;padding:0.3rem 0.625rem;border-radius:8px;text-decoration:none;transition:background 0.15s">
+              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/></svg>
+              Video
+            </a>` : ''}
+          </div>
+          <div class="catalog-card-body">
+            <div class="catalog-card-name">${product.name}</div>
+            <div class="catalog-card-desc">${product.shortDesc}</div>
+            <div class="catalog-card-cta">
+              Xem thông số kỹ thuật
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+
+    container.innerHTML = `
+      <div class="page-header">
+        <div class="page-eyebrow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          Thư viện sản phẩm
+        </div>
+        <h1 class="page-title">Tra cứu thông số kỹ thuật</h1>
+        <p class="page-sub">Xem và tìm kiếm thông số chi tiết của các thiết bị Tapo.</p>
+      </div>
+      <div class="search-wrap" style="max-width:560px">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="catalog-search" class="search-input" placeholder="Tìm theo tên thiết bị hoặc danh mục..." value="${currentCatalogSearchQuery}">
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        ${productsHTML}
+      </div>`;
+
+    const searchInput = document.getElementById('catalog-search');
+    if (searchInput) {
+      // Giữ con trỏ cuối
+      const val = searchInput.value;
+      searchInput.value = ''; searchInput.value = val;
+      searchInput.addEventListener('input', (e) => {
+        currentCatalogSearchQuery = e.target.value;
+        renderCatalogList();
+      });
+      // Focus giữ lại sau re-render nếu user đang gõ
+      if (document.activeElement === document.body && currentCatalogSearchQuery) {
+        searchInput.focus();
+      }
+    }
+    renderCompareBar();
+    lucide.createIcons();
+    // Báo chiều cao sau khi ảnh card load xong
+    notifyHeightAfterImages();
+    // Cập nhật thanh so sánh ở parent
+    notifyCompareState();
+  }
+
+  // ================================================================
+  // CATALOG DETAIL
+  // ================================================================
+  function renderCatalogDetail(productId) {
+    const products = typeof TapoProducts !== 'undefined' ? TapoProducts : [];
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    let specsHTML = '';
+    for (const [key, value] of Object.entries(product.specs)) {
+      specsHTML += `<div class="spec-row"><div class="spec-key">${key}</div><div class="spec-val">${value}</div></div>`;
+    }
+
+    document.getElementById('catalog-root').innerHTML = `
+      <button onclick="renderCatalogList()" style="margin-bottom:1.5rem;display:inline-flex;align-items:center;gap:0.5rem;font-size:0.82rem;font-weight:600;color:#64748b;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.5rem 1rem;cursor:pointer;transition:all 0.15s"
+        onmouseover="this.style.borderColor='#93c5fd';this.style.color='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Quay lại danh sách
+      </button>
+      <div class="card" style="overflow:hidden;margin-bottom:1.5rem">
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="background:linear-gradient(135deg,#f0f4ff,#e0eaff);padding:2rem;display:flex;align-items:center;justify-content:center;min-height:200px">
+            <img src="${product.image}" alt="${product.name}" style="max-width:260px;width:100%;border-radius:12px;box-shadow:0 8px 24px rgba(37,99,235,0.15);transition:transform 0.3s" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+          </div>
+          <div style="padding:1.5rem">
+            <div style="display:inline-block;background:var(--blue-50);color:var(--blue-700);font-size:0.72rem;font-weight:700;padding:0.25rem 0.75rem;border-radius:999px;border:1px solid var(--blue-200);margin-bottom:0.75rem">${product.category}</div>
+            <h1 style="font-size:1.5rem;font-weight:800;color:#0f172a;letter-spacing:-0.03em;margin:0 0 0.625rem;line-height:1.2">${product.name}</h1>
+            <p style="color:#64748b;font-size:0.875rem;line-height:1.65;margin:0 0 1.25rem">${product.shortDesc}</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.625rem">
+              <button style="display:inline-flex;align-items:center;gap:0.5rem;background:#2563eb;color:#fff;border:none;border-radius:10px;padding:0.6rem 1.125rem;font-size:0.82rem;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(37,99,235,0.3);transition:all 0.15s"
+                onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Tải Datasheet
+              </button>
+              <button onclick="copyToClipboard('${product.name}')" style="display:inline-flex;align-items:center;gap:0.5rem;background:#fff;color:#374151;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.6rem 1.125rem;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s"
+                onmouseover="this.style.borderColor='#93c5fd';this.style.color='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#374151'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy tên SP
+              </button>
+            </div>
+            ${product.video ? `<div style="margin-top:1rem">
+              <a href="${product.video}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.82rem;font-weight:700;color:#dc2626;background:#fff1f0;border:1.5px solid #fecaca;border-radius:10px;padding:0.5rem 1rem;text-decoration:none;transition:all 0.15s"
+                onmouseover="this.style.background='#dc2626';this.style.color='#fff'" onmouseout="this.style.background='#fff1f0';this.style.color='#dc2626'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/></svg>
+                Xem video hướng dẫn
+              </a>
+            </div>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="card" style="padding:1.5rem">
+        <h2 style="font-size:1rem;font-weight:800;color:#0f172a;margin:0 0 1.125rem;display:flex;align-items:center;gap:0.625rem">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          Thông số kỹ thuật chi tiết
+        </h2>
+        <div style="padding:0 0.5rem">${specsHTML}</div>
+      </div>`;
+
+    // Báo parent scroll lên đầu iframe, rồi báo chiều cao sau khi ảnh load
+    window.parent.postMessage({ type: 'catalog-scroll-top' }, '*');
+    notifyHeightAfterImages();
+  }
+
+  // ================================================================
+  // NHẬN LỆNH TỪ index.html QUA postMessage
+  // ================================================================
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'catalog-show-detail') renderCatalogDetail(e.data.productId);
+    if (e.data && e.data.type === 'catalog-show-list') renderCatalogList();
+    // Lệnh từ thanh so sánh ở parent
+    if (e.data && e.data.type === 'catalog-remove-compare') toggleCompare(e.data.id);
+    if (e.data && e.data.type === 'catalog-clear-compare') clearCompare();
+    if (e.data && e.data.type === 'catalog-do-compare') showCompareView();
+  });
+
+  // ================================================================
+  // INIT
+  // ================================================================
+  renderCatalogList();
+</script>
+</body>
+</html>
