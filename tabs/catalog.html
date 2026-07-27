@@ -468,7 +468,7 @@
         return `
         <div onclick="renderCatalogDetail('${product.id}')" class="catalog-card">
           <div class="catalog-card-img">
-            <img src="${product.image}" alt="${product.name}" loading="lazy">
+            <img src="${product.image}" alt="${product.name}" loading="lazy" referrerpolicy="no-referrer">
             <div class="cat-badge">${product.category}</div>
             <label onclick="event.stopPropagation()" title="${compareDisabled ? 'Chỉ so sánh cùng loại (tối đa 2)' : ''}"
               class="compare-label ${isSelected ? 'selected' : ''} ${compareDisabled ? 'opacity-40 cursor-not-allowed' : ''}">
@@ -558,6 +558,7 @@
           <div class="detail-hero-img" style="flex:0 0 240px;background:linear-gradient(145deg,#f0f5ff,#ddeaff);display:flex;align-items:center;justify-content:center;padding:1.75rem;min-height:220px">
             <img src="${product.image}" alt="${product.name}"
               style="width:100%;max-width:200px;object-fit:contain;border-radius:12px;transition:transform 0.3s;filter:drop-shadow(0 8px 20px rgba(37,99,235,0.18))"
+              referrerpolicy="no-referrer"
               onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
           </div>
 
