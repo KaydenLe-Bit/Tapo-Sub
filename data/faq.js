@@ -1,8 +1,4 @@
-// =============================================================================
-// FAQ DATA — Kayden Installer Portal
-// Chỉnh sửa file này để thêm / cập nhật câu hỏi thường gặp.
-// KHÔNG chạm vào faq.html.
-//
+
 // FORMAT BẮT BUỘC (thêm vào cuối mảng, ngay trên dòng ADD_NEW_FAQ):
 // {
 //   model:    "Tên model hoặc nhóm thiết bị",   ← hiển thị dưới dạng badge
