@@ -40,12 +40,12 @@ const faqsData = [
 // { model: "Tên video", link: "URL youtube/tài liệu", type: "Nhóm loại thiết bị" }
 // ─────────────────────────────────────────────────────────────────────────────
 const productsData = [
-  { model: "GT&HD Cấu hình EB8 4G", link: "https://www.youtube.com/watch?v=LTXNoKeYYdw", type: "Camera" },
-  { model: "GT&HD Cấu hình chuông cửa video CP3", link: "https://www.youtube.com/watch?v=6led1bWuiA0&t=2s", type: "Chuông hình" },
-  { model: "GT&HD Cấu hình H90F/C90F mắt kép zoom 12x", link: "https://www.youtube.com/watch?v=K2vqnrU3Ddg&t=20s", type: "Camera" },
-  { model: "GT&HD Cấu hình H90/C90 mắt kép", link: "https://www.youtube.com/watch?v=JdvF17yQZ3I&t=91s", type: "Camera" },
-  { model: "GT&HD Cấu hình Đầu ghi Tapo X5S", link: "https://www.youtube.com/watch?v=mqU_Dv6w-2U", type: "Đầu ghi" },
-  { model: "GT&HD Cấu hình HP2- mắt thần", link: "https://www.youtube.com/watch?v=3NS5PDijssQ&t=21s", type: "Smart Home" }
+  { model: "Chia Sẻ Truy Cập Camera Tapo", link: "https://www.youtube.com/watch?v=DYi3RwAb_jE", type: "HDCĐ Tapo Camera" },
+  { model: "Hướng dẫn lắp đặt Tapo C245D", link: "https://www.youtube.com/shorts/B-d_tdceZWc", type: "Hướng Dẫn Lắp Đặt" },
+  { model: "Hướng dẫn lắp đặt Tapo C545D", link: "https://www.youtube.com/shorts/8FX7d1m6Kvw", type: "Hướng Dẫn Lắp Đặt" },
+  { model: "Hướng dẫn cài đặt thông báo phát hiện trẻ khóc", link: "https://www.youtube.com/shorts/fhDKRCS_P0c", type: "HDCĐ Tapo Camera" },
+  { model: "Hướng dẫn cài đặt tuần tra tự động", link: "https://www.youtube.com/shorts/fi0PI1eqH7w", type: "HDCĐ Tapo Camera" },
+  { model: "Hướng dẫn lắp đặt Tapo C246D", link: "https://www.youtube.com/shorts/n3uJCBfJnSQ", type: "Hướng Dẫn Lắp Đặt" }
   // ADD_NEW_VIDEO ↑ Thêm video mới tại đây, ngay trên dòng này
 ];
 
@@ -55,7 +55,7 @@ const productsData = [
 // {
 //   id: "slug-duy-nhat",           ← dùng để link nội bộ, không dấu, gạch ngang
 //   name: "Tên đầy đủ sản phẩm",
-//   category: "Nhóm danh mục",     ← VD: 'Camera Trong Nhà', 'Smartlock'
+//   category: "Nhóm danh mục",     ← VD: 'Camera Wi-Fi Trong Nhà', 'Smartlock'
 //   type: "camera" | "lock" | ..., ← dùng cho bộ lọc so sánh
 //   image: "URL hình ảnh",
 //   shortDesc: "Mô tả ngắn 1-2 câu",
@@ -70,7 +70,7 @@ const TapoProducts = [
   {
     id: "tapo-c245d",
     name: "TP-Link Tapo C245D",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C245D_UN_1.0_Overview_01_normal_20251126053836q.jpg",
     shortDesc: "Camera ống kính kép 2K trong nhà, chuẩn ONVIF, theo dõi toàn diện góc rộng.",
@@ -88,7 +88,7 @@ const TapoProducts = [
   {
     id: "tapo-c260",
     name: "TP-Link Tapo C260",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C260_UN_1.0_overview_01_normal_20250314011954p.jpg",
     shortDesc: "Camera trong nhà độ phân giải cực cao 4K/8MP, nhận diện khuôn mặt AI.",
@@ -106,7 +106,7 @@ const TapoProducts = [
   {
     id: "tapo-c250",
     name: "TP-Link Tapo C250",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C250_US_1.0_overview-01_normal_20250908030313k.jpg",
     shortDesc: "Camera trong nhà 4K/8MP hình ảnh sắc nét vượt trội, nhìn đêm Starlight.",
@@ -124,7 +124,7 @@ const TapoProducts = [
   {
     id: "tapo-c230",
     name: "TP-Link Tapo C230",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C230_EU_1.0_overview_1_normal_20241011012230x.jpg",
     shortDesc: "Camera trong nhà 3K/5MP, cân bằng giữa chi tiết hình ảnh và băng thông.",
@@ -142,7 +142,7 @@ const TapoProducts = [
   {
     id: "tapo-c225",
     name: "TP-Link Tapo C225",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C225_US_2.0_overview_01_normal_20240117231537i.jpg",
     shortDesc: "Camera 2K QHD, hồng ngoại vô hình 940nm không chói mắt, có cổng LAN + Wi-Fi.",
@@ -161,7 +161,7 @@ const TapoProducts = [
   {
     id: "tapo-c220",
     name: "TP-Link Tapo C220",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/01_normal_20250610013736y.jpg",
     shortDesc: "Camera 2K QHD phổ biến cho gia đình, nhìn đêm hồng ngoại tiêu chuẩn.",
@@ -179,7 +179,7 @@ const TapoProducts = [
   {
     id: "tapo-c120",
     name: "TP-Link Tapo C120",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/01_normal_20231023030053x.jpg",
     shortDesc: "Camera 2K QHD chống nước chuẩn IP66, lắp được ở ban công/nơi bán ngoài trời.",
@@ -198,7 +198,7 @@ const TapoProducts = [
   {
     id: "tapo-c211",
     name: "TP-Link Tapo C211",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/01_normal_20230818094130w.jpg",
     shortDesc: "Camera 2K trong nhà phổ thông, đáp ứng nhu cầu quan sát gia đình cơ bản.",
@@ -216,7 +216,7 @@ const TapoProducts = [
   {
     id: "tapo-tc71",
     name: "TP-Link Tapo TC71",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/01_normal_20230524004739b.jpg",
     shortDesc: "Camera 2K trong nhà phổ thông, chi phí tối ưu cho gia đình.",
@@ -234,7 +234,7 @@ const TapoProducts = [
   {
     id: "tapo-c206",
     name: "TP-Link Tapo C206",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C206_EU_1.0_overview_01_normal_20250321075014l.jpg",
     shortDesc: "Camera Full HD chống nước IP65, xoay 360°, nhìn đêm có màu, dùng linh hoạt trong nhà lẫn ngoài trời.",
@@ -253,7 +253,7 @@ const TapoProducts = [
   {
     id: "tapo-c200-tc70",
     name: "TP-Link Tapo C200 / TC70",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/01_normal_20230817224004g.jpg",
     shortDesc: "Camera Full HD giá tốt, đầy đủ tính năng báo động và đàm thoại 2 chiều.",
@@ -271,7 +271,7 @@ const TapoProducts = [
   {
     id: "tapo-c200c",
     name: "TP-Link Tapo C200C",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/01_normal_20230817224004g.jpg",
     shortDesc: "Phiên bản rút gọn dòng C200, phù hợp nhu cầu giám sát cơ bản.",
@@ -286,7 +286,7 @@ const TapoProducts = [
   {
     id: "tapo-c232",
     name: "TP-Link Tapo C232",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C232_EU_1.0_overview_01-1_normal_20250508014735y.jpg",
     shortDesc: "Camera 5MP kết nối linh hoạt LAN/Wi-Fi.",
@@ -304,7 +304,7 @@ const TapoProducts = [
   {
     id: "tapo-c222",
     name: "TP-Link Tapo C222",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C222_EU_1.0_overview_1_normal_20240722025906e.png",
     shortDesc: "Camera 4MP kết nối linh hoạt LAN/Wi-Fi.",
@@ -322,7 +322,7 @@ const TapoProducts = [
   {
     id: "tapo-c212",
     name: "TP-Link Tapo C212",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/01-1_normal_20230826003415i.jpg",
     shortDesc: "Camera 3MP kết nối linh hoạt LAN/Wi-Fi, phát hiện người và tiếng khóc trẻ em.",
@@ -340,7 +340,7 @@ const TapoProducts = [
   {
     id: "tapo-c202",
     name: "TP-Link Tapo C202",
-    category: "Camera Trong Nhà",
+    category: "Camera Wi-Fi Trong Nhà",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/01-1_normal_20240513182842d.jpg",
     shortDesc: "Camera 2MP kết nối linh hoạt LAN/Wi-Fi, giá thành tối ưu.",
@@ -361,7 +361,7 @@ const TapoProducts = [
   {
     id: "tapo-c501gw",
     name: "TP-Link Tapo C501GW",
-    category: "Camera Ngoài Trời",
+    category: "Camera Wi-Fi Ngoài Trời",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C501GW_EU_1.0_overview_01_normal_20240830082336v.jpg",
     shortDesc: "Camera ngoài trời dùng SIM 4G LTE, lý tưởng cho nơi không có sẵn Wi-Fi (trang trại, công trình).",
@@ -381,7 +381,7 @@ const TapoProducts = [
   {
     id: "tapo-c545d",
     name: "TP-Link Tapo C545D",
-    category: "Camera Ngoài Trời",
+    category: "Camera Wi-Fi Ngoài Trời",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C545D_EU_1.0_Overview_01_normal_20250811022611w.jpg",
     shortDesc: "Camera ngoài trời mắt kép 2K, góc nhìn siêu rộng 165°, nhận diện khuôn mặt.",
@@ -400,7 +400,7 @@ const TapoProducts = [
   {
     id: "tapo-c560ws",
     name: "TP-Link Tapo C560WS",
-    category: "Camera Ngoài Trời",
+    category: "Camera Wi-Fi Ngoài Trời",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C560WS_EU_1.0_overview_01_normal_20250429063213z.jpg",
     shortDesc: "Camera ngoài trời 4K/8MP sắc nét, tầm nhìn đêm Starlight, chống nước IP66.",
@@ -420,7 +420,7 @@ const TapoProducts = [
   {
     id: "tapo-c530ws",
     name: "TP-Link Tapo C530WS",
-    category: "Camera Ngoài Trời",
+    category: "Camera Wi-Fi Ngoài Trời",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C530WS_EU_2.0_overview_01_normal_20241031071947c.jpg",
     shortDesc: "Camera ngoài trời 3K/5MP xoay quét 360°, bám theo chuyển động thông minh.",
@@ -440,7 +440,7 @@ const TapoProducts = [
   {
     id: "tapo-c520ws",
     name: "TP-Link Tapo C520WS",
-    category: "Camera Ngoài Trời",
+    category: "Camera Wi-Fi Ngoài Trời",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C520WS_EU_1.0_overview_01_normal_20230518095424i.jpg",
     shortDesc: "Camera ngoài trời 2K QHD xoay quét 360°, nhìn đêm Starlight, chống nước IP66.",
@@ -460,7 +460,7 @@ const TapoProducts = [
   {
     id: "tapo-c510w",
     name: "TP-Link Tapo C510W",
-    category: "Camera Ngoài Trời",
+    category: "Camera Wi-Fi Ngoài Trời",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/01_normal_20230420071916t.jpg",
     shortDesc: "Camera ngoài trời 2K, xoay quét 360°, nhìn đêm có màu (Color Night Vision).",
@@ -480,7 +480,7 @@ const TapoProducts = [
   {
     id: "tapo-tc40",
     name: "TP-Link Tapo TC40",
-    category: "Camera Ngoài Trời",
+    category: "Camera Wi-Fi Ngoài Trời",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_TC40_EU_2.0_overview_2406_English_01-1_normal_20240730070132i.jpg",
     shortDesc: "Camera ngoài trời Full HD, xoay quét 360°, nhìn đêm có màu, giá tiết kiệm.",
@@ -500,7 +500,7 @@ const TapoProducts = [
   {
     id: "tapo-c325wb",
     name: "TP-Link Tapo C325WB",
-    category: "Camera Ngoài Trời",
+    category: "Camera Wi-Fi Ngoài Trời",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C325WB_EU_2.0_overview_01-1_normal_20241221061245u.jpg",
     shortDesc: "Camera thân cố định ngoài trời, công nghệ ColorPro Night Vision - hình ảnh màu ban đêm chân thực không cần đèn chiếu.",
@@ -519,7 +519,7 @@ const TapoProducts = [
   {
     id: "tapo-c320ws",
     name: "TP-Link Tapo C320WS",
-    category: "Camera Ngoài Trời",
+    category: "Camera Wi-Fi Ngoài Trời",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C320WS_Tapo_C320WSP2_EU_2_normal_20231019030651h.png",
     shortDesc: "Camera thân ngoài trời siêu bền bỉ, kết nối LAN/Wi-Fi ổn định.",
@@ -538,7 +538,7 @@ const TapoProducts = [
   {
     id: "tapo-c310",
     name: "TP-Link Tapo C310",
-    category: "Camera Ngoài Trời",
+    category: "Camera Wi-Fi Ngoài Trời",
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C310%EF%80%A2Tapo_C310P2_EU_2.20_overview_01_normal_20230712010643k.jpg",
     shortDesc: "Camera thân ngoài trời 2K, phát hiện chuyển động và người, chống nước IP66.",
