@@ -115,6 +115,31 @@
       .compare-item-name { max-width: 80px !important; }
     }
 
+    /* Nút so sánh trên mobile: chỉ hiện ô tích, ẩn chữ */
+    @media (max-width: 600px) {
+      .compare-label {
+        padding: 0.25rem;
+        gap: 0;
+        width: 26px;
+        height: 26px;
+        justify-content: center;
+        border-radius: 6px;
+      }
+      .compare-label .compare-text { display: none; }
+      .compare-label input[type="checkbox"] {
+        width: 14px !important;
+        height: 14px !important;
+        margin: 0;
+        cursor: pointer;
+      }
+    }
+
+    /* Detail hero: stack dọc trên mobile */
+    @media (max-width: 600px) {
+      .detail-hero { flex-direction: column !important; }
+      .detail-hero-img { flex: none !important; width: 100% !important; min-height: 200px !important; }
+    }
+
     /* ── CATALOG CARD — redesign với ảnh vuông ── */
     .catalog-card {
       background: #fff;
@@ -447,7 +472,7 @@
             <label onclick="event.stopPropagation()" title="${compareDisabled ? 'Chỉ so sánh cùng loại (tối đa 2)' : ''}"
               class="compare-label ${isSelected ? 'selected' : ''} ${compareDisabled ? 'opacity-40 cursor-not-allowed' : ''}">
               <input type="checkbox" style="width:12px;height:12px;accent-color:#2563eb" ${isSelected ? 'checked' : ''} ${compareDisabled ? 'disabled' : ''} onchange="toggleCompare('${product.id}', event)">
-              So sánh
+              <span class="compare-text">So sánh</span>
             </label>
             ${product.video ? `
             <a href="${product.video}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"
@@ -526,36 +551,45 @@
         Quay lại danh sách
       </button>
       <div class="card" style="overflow:hidden;margin-bottom:1.5rem">
-        <div style="display:flex;flex-direction:column;gap:0">
-          <div style="background:linear-gradient(135deg,#f0f4ff,#e0eaff);padding:2rem;display:flex;align-items:center;justify-content:center;min-height:200px">
-            <img src="${product.image}" alt="${product.name}" style="max-width:260px;width:100%;border-radius:12px;box-shadow:0 8px 24px rgba(37,99,235,0.15);transition:transform 0.3s" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+        <div class="detail-hero" style="display:flex;flex-direction:row;align-items:stretch;gap:0">
+
+          <!-- ẢNH BÊN TRÁI -->
+          <div class="detail-hero-img" style="flex:0 0 240px;background:linear-gradient(145deg,#f0f5ff,#ddeaff);display:flex;align-items:center;justify-content:center;padding:1.75rem;min-height:220px">
+            <img src="${product.image}" alt="${product.name}"
+              style="width:100%;max-width:200px;object-fit:contain;border-radius:12px;transition:transform 0.3s;filter:drop-shadow(0 8px 20px rgba(37,99,235,0.18))"
+              onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
           </div>
-          <div style="padding:1.5rem">
-            <div style="display:inline-block;background:var(--blue-50);color:var(--blue-700);font-size:0.72rem;font-weight:700;padding:0.25rem 0.75rem;border-radius:999px;border:1px solid var(--blue-200);margin-bottom:0.75rem">${product.category}</div>
-            <h1 style="font-size:1.5rem;font-weight:800;color:#0f172a;letter-spacing:-0.03em;margin:0 0 0.625rem;line-height:1.2">${product.name}</h1>
-            <p style="color:#64748b;font-size:0.875rem;line-height:1.65;margin:0 0 1.25rem">${product.shortDesc}</p>
-            <div style="display:flex;flex-wrap:wrap;gap:0.625rem">
-              <button style="display:inline-flex;align-items:center;gap:0.5rem;background:#2563eb;color:#fff;border:none;border-radius:10px;padding:0.6rem 1.125rem;font-size:0.82rem;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(37,99,235,0.3);transition:all 0.15s"
-                onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Tải Datasheet
-              </button>
-              <button onclick="copyToClipboard('${product.name}')" style="display:inline-flex;align-items:center;gap:0.5rem;background:#fff;color:#374151;border:1.5px solid #e2e8f0;border-radius:10px;padding:0.6rem 1.125rem;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s"
-                onmouseover="this.style.borderColor='#93c5fd';this.style.color='#2563eb'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#374151'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                Copy tên SP
+
+          <!-- NỘI DUNG BÊN PHẢI -->
+          <div style="flex:1;padding:1.625rem 1.75rem;display:flex;flex-direction:column;justify-content:center;min-width:0">
+            <div style="display:inline-block;background:var(--blue-50);color:var(--blue-700);font-size:0.68rem;font-weight:700;padding:0.22rem 0.7rem;border-radius:999px;border:1px solid var(--blue-200);margin-bottom:0.75rem;width:fit-content">${product.category}</div>
+
+            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.625rem">
+              <h1 style="font-size:1.5rem;font-weight:800;color:#0f172a;letter-spacing:-0.03em;margin:0;line-height:1.2">${product.name}</h1>
+              <button onclick="copyToClipboard('${product.name}')" title="Copy tên model"
+                style="display:inline-flex;align-items:center;gap:4px;background:#f1f5f9;color:#64748b;border:1.5px solid #e2e8f0;border-radius:8px;padding:0.3rem 0.6rem;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all 0.15s;flex-shrink:0"
+                onmouseover="this.style.borderColor='#93c5fd';this.style.color='#2563eb';this.style.background='#eff6ff'"
+                onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b';this.style.background='#f1f5f9'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy
               </button>
             </div>
-            ${product.video ? `<div style="margin-top:1rem">
-              <a href="${product.video}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.82rem;font-weight:700;color:#dc2626;background:#fff1f0;border:1.5px solid #fecaca;border-radius:10px;padding:0.5rem 1rem;text-decoration:none;transition:all 0.15s"
-                onmouseover="this.style.background='#dc2626';this.style.color='#fff'" onmouseout="this.style.background='#fff1f0';this.style.color='#dc2626'">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/></svg>
-                Xem video hướng dẫn
-              </a>
-            </div>` : ''}
+
+            <p style="color:#64748b;font-size:0.875rem;line-height:1.7;margin:0 0 1.25rem">${product.shortDesc}</p>
+
+            ${product.video ? `
+            <a href="${product.video}" target="_blank" rel="noopener noreferrer"
+              style="display:inline-flex;align-items:center;gap:0.5rem;font-size:0.8rem;font-weight:700;color:#dc2626;background:#fff1f0;border:1.5px solid #fecaca;border-radius:10px;padding:0.45rem 0.9rem;text-decoration:none;transition:all 0.15s;width:fit-content"
+              onmouseover="this.style.background='#dc2626';this.style.color='#fff'" onmouseout="this.style.background='#fff1f0';this.style.color='#dc2626'">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.2-1.2-2.5-1.2-3.1-1.3C16.5 2 12 2 12 2s-4.5 0-7.2.2c-.6.1-2 .1-3.1 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.2 1.2 2.7 1.1 3.4 1.2C7.2 21.8 12 22 12 22s4.5 0 7.2-.3c.6-.1 2-.1 3.1-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.3 3.6-8.3 3.5z"/></svg>
+              Xem video hướng dẫn
+            </a>` : ''}
           </div>
+
         </div>
       </div>
+
+
       <div class="card" style="padding:1.5rem">
         <h2 style="font-size:1rem;font-weight:800;color:#0f172a;margin:0 0 1.125rem;display:flex;align-items:center;gap:0.625rem">
           <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
