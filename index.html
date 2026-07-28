@@ -179,8 +179,8 @@
         <iframe
           id="calculator-iframe"
           src="tabs/calculator.html"
-          style="width:100%;border:none;display:block;min-height:720px"
-          scrolling="no"
+          style="width:100%;border:none;display:block;min-height:360px"
+          scrolling="auto"
           loading="lazy"
           title="Lưu trữ & Data Calculator"
         ></iframe>
@@ -400,6 +400,25 @@
   // ================================================================
   // TAB SWITCHING
   // ================================================================
+
+  // Cố định chiều cao khung Calculator theo đúng khoảng trống còn lại của
+  // màn hình (không phụ thuộc nội dung bên trong), để tránh layout bị "nhảy"
+  // liên tục khi người dùng gõ số / đổi lựa chọn trên mobile -> dễ chạm nhầm.
+  // Nếu nội dung dài hơn khung, iframe tự cuộn bên trong (1 vùng cuộn ổn định).
+  function fitCalculatorIframe() {
+    const iframe = document.getElementById('calculator-iframe');
+    if (!iframe || activeTab !== 'calculator') return;
+    requestAnimationFrame(() => {
+      const top = iframe.getBoundingClientRect().top;
+      const bottomNav = document.getElementById('mobile-bottom-nav');
+      const bottomNavH = (bottomNav && getComputedStyle(bottomNav).display !== 'none') ? bottomNav.offsetHeight : 0;
+      // dùng visualViewport nếu có để tránh lệch do thanh địa chỉ trình duyệt mobile ẩn/hiện
+      const viewportH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      const available = viewportH - top - bottomNavH - 16; // 16px đệm an toàn
+      iframe.style.height = Math.max(360, available) + 'px';
+    });
+  }
+
   function switchTab(tab) {
     activeTab = tab;
     const tabs = ['faq','catalog','products','calculator','lock','installer'];
@@ -427,7 +446,13 @@
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (tab === 'calculator') fitCalculatorIframe();
   }
+
+  // Tính lại khi xoay màn hình / đổi kích thước, chỉ khi đang ở tab Calculator
+  window.addEventListener('resize', () => { if (activeTab === 'calculator') fitCalculatorIframe(); });
+  window.addEventListener('orientationchange', () => { if (activeTab === 'calculator') fitCalculatorIframe(); });
 
   // FAQ functions đã được tách sang tabs/faq.html
   // Catalog functions đã được tách sang tabs/catalog.html
@@ -671,10 +696,10 @@
         if (iframe.style.height !== newH) iframe.style.height = newH;
       }
     }
-    if (e.data && e.data.type === 'calc-height') {
-      const iframe = document.getElementById('calculator-iframe');
-      if (iframe) iframe.style.height = (e.data.height + 24) + 'px';
-    }
+    // Lưu ý: calculator.html vẫn gửi 'calc-height' nhưng ta không dùng nữa —
+    // chiều cao của iframe Calculator giờ được cố định theo khoảng trống
+    // viewport còn lại (xem fitCalculatorIframe()), tránh nhảy layout khi
+    // người dùng thao tác trên mobile. Nội dung dài hơn sẽ tự cuộn bên trong.
     if (e.data && e.data.type === 'catalog-height') {
       const iframe = document.getElementById('catalog-iframe');
       if (iframe) {
