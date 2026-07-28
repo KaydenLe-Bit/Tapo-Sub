@@ -203,6 +203,27 @@
 
     const btnClass = (active) => `p-3 text-sm font-bold text-center rounded-xl border-2 transition-all cursor-pointer ${active ? 'border-blue-600 bg-blue-600 text-white shadow-md' : 'border-slate-200 bg-white text-slate-600 hover:border-blue-400 hover:bg-blue-50'}`;
 
+    // --- Giao tiếp với index.html: tự động báo chiều cao thật để iframe giãn đủ ---
+    function sendHeightToParent() {
+      // scrollHeight của documentElement phản ánh đúng tổng chiều cao nội dung
+      // kể cả khi layout xếp dọc 1 cột trên màn hình điện thoại
+      const height = Math.max(
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight
+      );
+      window.parent.postMessage({ type: 'calc-height', height }, '*');
+    }
+
+    // Theo dõi mọi thay đổi kích thước nội dung (đổi tab, nhập liệu, đổi kết quả...)
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(() => sendHeightToParent()).observe(document.body);
+    }
+    window.addEventListener('load', sendHeightToParent);
+    window.addEventListener('resize', sendHeightToParent);
+    // Gọi lại sau một nhịp để chắc chắn icon Lucide và font đã render xong
+    setTimeout(sendHeightToParent, 100);
+    setTimeout(sendHeightToParent, 500);
+
     // --- UI/Tab Logic ---
     function switchTab(tab) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.toggle('hidden', el.id !== `section-${tab}`));
@@ -210,6 +231,8 @@
         const isActive = btn.id === `btn-tab-${tab}`;
         btn.className = `tab-btn flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all ${isActive ? 'bg-white text-blue-700 shadow' : 'text-slate-500'}`;
       });
+      // Chiều cao thay đổi hẳn khi chuyển tab -> báo lại ngay
+      requestAnimationFrame(sendHeightToParent);
     }
 
     // --- 1. SD Card ---
@@ -285,7 +308,7 @@
                                        `Cao (${dailyGB.toFixed(1)} GB/ngày). Bắt buộc chọn <strong>SIM 4G Không Giới Hạn</strong>.`;
     }
 
-    window.onload = () => { updateSdUI(); updateHddUI(); update4GUI(); lucide.createIcons(); };
+    window.onload = () => { updateSdUI(); updateHddUI(); update4GUI(); lucide.createIcons(); sendHeightToParent(); };
   </script>
 </body>
 </html>
