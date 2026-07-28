@@ -21,7 +21,7 @@ const faqsData = [
     model: "Lỗi Hiển Thị - Kết Nối",
     question: "Mất kết nối khi đổi Wi-Fi, đổi Router mạng hoặc đổi điện thoại mới",
     answer: "• Phương án 1 (Reset cài lại toàn bộ):\n1. Nhấn giữ nút RESET trên thân camera từ 5-10 giây tới khi đèn báo đổi màu hoặc phát tiếng báo.\n2. Mở App Tapo > Bấm dấu '+' > Chọn đúng model camera Tapo.\n3. Quét tìm thiết bị và nhập tên / mật khẩu Wi-Fi mới.\n\n• Phương án 2 (Mẹo giữ nguyên cấu hình cũ):\n1. Đổi SSID (Tên Wi-Fi) và Mật khẩu của Router mới giống hệt 100% với Router cũ.\n2. Camera sẽ tự động kết nối Online trở lại mà không cần leo tháo lắp hay reset lại.",
-    link: ''
+    link: 'https://www.youtube.com/shorts/-ni9jLukhaI'
   },
   {
     model: "Lỗi Hiển Thị - Kết Nối",
@@ -69,7 +69,7 @@ const faqsData = [
     model: "Lỗi Lưu Trữ - Phần Mềm",
     question: "Camera không xem lại được video, không lưu trữ hoặc báo lỗi thẻ nhớ MicroSD",
     answer: "1. Kiểm tra trạng thái trong App:\n- Vào Cài đặt Camera > Lưu trữ & Ghi âm > Lưu trữ cục bộ.\n\n2. Trường hợp báo 'Không xác định':\n- Bấm trực tiếp vào mục Lưu trữ cục bộ > Chọn Định dạng thẻ nhớ MicroSD (Format MicroSD Card).\n\n3. Trường hợp báo 'Không thể định dạng':\n- Thẻ nhớ bị hỏng chip flash, bị khóa ghi hoặc là thẻ nhái kém chất lượng.\n- Hướng dẫn khách thay thẻ nhớ Class 10 U3 chính hãng chuyên dụng cho camera (SanDisk High Endurance, Kingston Canvas Select, Kioxia...).",
-    link: ''
+    link: 'https://www.youtube.com/shorts/snXULB2jGsg'
   },
   {
     model: "Lỗi Lưu Trữ - Phần Mềm",
