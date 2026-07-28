@@ -10,6 +10,7 @@ const productsData = [
   { model: "Hướng dẫn lắp đặt Tapo C545D", link: "https://www.youtube.com/shorts/8FX7d1m6Kvw", type: "Hướng Dẫn Lắp Đặt" },
   { model: "Hướng dẫn cài đặt thông báo phát hiện trẻ khóc", link: "https://www.youtube.com/shorts/fhDKRCS_P0c", type: "HDCĐ Tapo Camera" },
   { model: "Hướng dẫn cài đặt tuần tra tự động", link: "https://www.youtube.com/shorts/fi0PI1eqH7w", type: "HDCĐ Tapo Camera" },
+  { model: "Hướng dẫn lắp đặt Tapo C500/510W/520WS/530WS", link: "https://www.youtube.com/watch?v=3tHs_lWwmwQ", type: "Hướng Dẫn Lắp Đặt" },
   { model: "Hướng dẫn lắp đặt Tapo C246D", link: "https://www.youtube.com/shorts/n3uJCBfJnSQ", type: "Hướng Dẫn Lắp Đặt" }
   // ADD_NEW_VIDEO ↑ Thêm video mới tại đây, ngay trên dòng này
 ];
