@@ -621,13 +621,13 @@ const WARRANTY_CHECK_URL = "https://www.tp-link.com/vn/warranty/";
 // ─────────────────────────────────────────────────────────────────────────────
 const AUTHORIZED_CENTERS = [
   // ── Thế Giới Di Động ──
-  { group: 'tgdd', region: 'bac',   name: 'TGDĐ - Cầu Giấy, Hà Nội',   address: 'Số 1 Xuân Thủy, Cầu Giấy, Hà Nội',        phone: '1800.1060' },
-  { group: 'tgdd', region: 'trung', name: 'TGDĐ - Hải Châu, Đà Nẵng',  address: '120 Nguyễn Văn Linh, Hải Châu, Đà Nẵng',  phone: '1800.1060' },
-  { group: 'tgdd', region: 'nam',   name: 'TGDĐ - Quận 1, TP.HCM',     address: '89 Nguyễn Huệ, Quận 1, TP.Hồ Chí Minh',   phone: '1800.1060' },
+  { group: 'tgdd', region: 'bac',   name: 'TGDĐ - DMX',   address: 'Tất cả các chi nhánh trong khu vực',        phone: '1800.1060' },
+  { group: 'tgdd', region: 'trung', name: 'TGDĐ - DMX',  address: 'Tất cả các chi nhánh trong khu vực',  phone: '1800.1060' },
+  { group: 'tgdd', region: 'nam',   name: 'TGDĐ - DMX',     address: 'Tất cả các chi nhánh trong khu vực',   phone: '1800.1060' },
 
   // ── NPP / Đại lý / Khách hàng ──
-  { group: 'other', region: 'bac',   name: 'NPP Miền Bắc - Hà Nội',    address: 'Số 12 Láng Hạ, Đống Đa, Hà Nội',          phone: '024.xxxx.xxxx' },
-  { group: 'other', region: 'trung', name: 'Đại lý Miền Trung - Huế',  address: '45 Hùng Vương, TP. Huế',                  phone: '0234.xxx.xxx' },
-  { group: 'other', region: 'nam',   name: 'NPP Miền Nam - TP.HCM',    address: '200 Cách Mạng Tháng 8, Quận 3, TP.HCM',   phone: '028.xxxx.xxxx' }
+  { group: 'other', region: 'bac',   name: 'PHTD Chi Nhánh Hà Nội',    address: 'Tầng B1, Số 167 Phố Trung Kính, Phường Yên Hòa, Quận Cầu Giấy, Hà Nội',          phone: '0866.442.609' },
+  { group: 'other', region: 'trung', name: 'PHTD Chi Nhánh Đà Nẵng',  address: 'Tầng 8, Tòa Nhà Đại Thắng, 278-280 Xô Viết Nghệ Tĩnh, P Cẩm Lê, Đà Nẵng',                  phone: '0905.444.522' },
+  { group: 'other', region: 'nam',   name: 'PHTD Chi Nhánh HCM',    address: '465/6 Phan Văn Trị, Phường An Nhơn, TP.HCM',   phone: '0988.727.271' }
   // ADD_NEW_CENTER ↑ Thêm trung tâm mới tại đây, ngay trên dòng này
 ];
