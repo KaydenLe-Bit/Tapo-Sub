@@ -26,6 +26,7 @@ const productsData = [
 //   image: "URL hình ảnh",
 //   shortDesc: "Mô tả ngắn 1-2 câu",
 //   video: "URL youtube (tùy chọn, bỏ qua nếu không có)",
+//   detailLink: "URL trang thông tin chi tiết (tùy chọn, bỏ qua nếu không có)",
 //   specs: {                        ← key: value, thêm/bớt field tùy ý
 //     "Tên thông số": "Giá trị",
 //     ...
@@ -40,6 +41,7 @@ const TapoProducts = [
     type: "camera",
     image: "https://static.tp-link.com/upload/image-line/Tapo_C245D_UN_1.0_Overview_01_normal_20251126053836q.jpg",
     shortDesc: "Camera ống kính kép 2K trong nhà, chuẩn ONVIF, theo dõi toàn diện góc rộng.",
+    detailLink: "https://www.tp-link.com/vn/home-networking/cloud-camera/tapo-c245d/",
     specs: {
       "Nổi bật": "Ống Kính Kép",
       "Độ phân giải": "2K/3MP x 2 (ống kính kép)",
