@@ -61,11 +61,27 @@
       line-height: 1.6;
     }
 
-    /* ── SEARCH ── */
+    /* ── FILTERS ROW (search + dropdown, aligned) ── */
+    .filters-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── SEARCH (collapsible) ── */
     .search-shell {
       position: relative;
-      max-width: 520px;
-      margin: 0 0 0.75rem;
+      max-width: 42px;
+      height: 42px;
+      transition: max-width .25s ease;
+      flex: 0 0 auto;
+    }
+    .search-shell.expanded {
+      max-width: 400px;
+      flex: 1;
+      min-width: 220px;
     }
     .search-shell svg {
       position: absolute;
@@ -74,10 +90,13 @@
       transform: translateY(-50%);
       color: #94a3b8;
       pointer-events: none;
-      width: 16px; height: 16px;
+      width: 14px; height: 14px;
+      z-index: 1;
     }
     .search-shell input {
       width: 100%;
+      height: 42px;
+      box-sizing: border-box;
       padding: 11px 14px 11px 42px;
       font-size: 0.9rem;
       font-family: 'Inter', sans-serif;
@@ -87,66 +106,65 @@
       border-radius: 12px;
       outline: none;
       transition: border-color .18s, box-shadow .18s;
+      cursor: pointer;
     }
+    .search-shell:not(.expanded) { border-radius: 50%; overflow: hidden; }
+    .search-shell:not(.expanded) input { border-radius: 50%; }
+    .search-shell.expanded input { cursor: text; }
     .search-shell input::placeholder { color: #94a3b8; }
     .search-shell input:focus {
       border-color: #93c5fd;
       box-shadow: 0 0 0 3px #dbeafe;
     }
+    .search-shell-close {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px; height: 22px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      z-index: 1;
+    }
+    .search-shell-close:hover { background: #f1f5f9; color: #475569; }
+    .search-shell.expanded .search-shell-close { display: flex; }
     #faq-count {
       font-size: 0.78rem;
       color: #94a3b8;
       margin-bottom: 1.25rem;
     }
 
-    /* ── CATEGORY FILTER PILLS ── */
-    .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 1.5rem;
-    }
-    .filter-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 0.78rem;
+    /* ── CATEGORY FILTER (dropdown) ── */
+    .filter-select {
+      height: 40px;
+      box-sizing: border-box;
+      padding: 0 34px 0 14px;
+      font-size: 0.85rem;
       font-weight: 500;
-      padding: 5px 12px;
-      border-radius: 999px;
+      font-family: 'Inter', sans-serif;
+      color: #334155;
+      background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>') no-repeat right 10px center;
+      background-size: 14px;
       border: 1.5px solid #e2e8f0;
-      background: #fff;
-      color: #475569;
+      border-radius: 10px;
+      outline: none;
       cursor: pointer;
-      transition: all .15s;
-      white-space: nowrap;
+      appearance: none;
+      -webkit-appearance: none;
+      max-width: 260px;
+      flex: 0 0 auto;
+      transition: border-color .15s;
     }
-    .filter-pill:hover {
+    .filter-select:hover { border-color: #93c5fd; }
+    .filter-select:focus {
       border-color: #93c5fd;
-      color: #1d4ed8;
-      background: #eff6ff;
-    }
-    .filter-pill.active {
-      background: #1d4ed8;
-      border-color: #1d4ed8;
-      color: #fff;
-    }
-    .filter-pill .pill-count {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 18px;
-      height: 18px;
-      padding: 0 5px;
-      border-radius: 999px;
-      font-size: 0.68rem;
-      font-weight: 700;
-      background: rgba(255,255,255,0.25);
-      color: inherit;
-    }
-    .filter-pill:not(.active) .pill-count {
-      background: #f1f5f9;
-      color: #64748b;
+      box-shadow: 0 0 0 3px #dbeafe;
     }
 
     /* ── FAQ LIST ── */
@@ -358,15 +376,18 @@
     <p>Tìm nhanh lỗi, hướng dẫn xử lý và video cho từng thiết bị.</p>
   </div>
 
-  <!-- SEARCH -->
-  <div class="search-shell">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="text" id="faq-search" placeholder="Tìm theo mã lỗi, tên thiết bị, triệu chứng..." oninput="onSearch()">
+  <!-- SEARCH + FILTER -->
+  <div class="filters-row">
+    <div class="search-shell" id="search-shell">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="faq-search" placeholder="Tìm theo mã lỗi, tên thiết bị, triệu chứng..." oninput="onSearch()" onfocus="expandSearch()">
+      <button type="button" class="search-shell-close" onclick="collapseSearch()" aria-label="Đóng tìm kiếm">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="filter-row"></div>
   </div>
   <div id="faq-count"></div>
-
-  <!-- CATEGORY FILTER -->
-  <div class="filter-row" id="filter-row"></div>
 
   <!-- LIST -->
   <div id="faq-list"></div>
@@ -377,6 +398,19 @@
 // ── STATE ──────────────────────────────────────────────────────────────────
 let expandedFaq   = null;
 let activeFilter  = 'all';
+
+// ── SEARCH COLLAPSE/EXPAND ────────────────────────────────────────────────
+function expandSearch() {
+  const shell = document.getElementById('search-shell');
+  if (shell) shell.classList.add('expanded');
+}
+function collapseSearch() {
+  const shell = document.getElementById('search-shell');
+  const input = document.getElementById('faq-search');
+  if (input) input.value = '';
+  if (shell) shell.classList.remove('expanded');
+  onSearch();
+}
 /*
 // ── BADGE COLOR MAP ────────────────────────────────────────────────────────
 const BADGE_COLORS = {
@@ -399,22 +433,20 @@ function badgeClass(model) {
   return 'badge-blue';
 }
 
-// ── FILTER PILLS ───────────────────────────────────────────────────────────
+// ── FILTER DROPDOWN ────────────────────────────────────────────────────────
 function buildFilters(data) {
   const counts = {};
   data.forEach(f => { counts[f.model] = (counts[f.model] || 0) + 1; });
   const row = document.getElementById('filter-row');
   const total = data.length;
 
-  const pills = [{ label: 'Tất cả', key: 'all', count: total }];
-  Object.entries(counts).forEach(([k,v]) => pills.push({ label: k, key: k, count: v }));
+  const options = [{ label: `Tất cả danh mục (${total})`, key: 'all' }];
+  Object.entries(counts).forEach(([k,v]) => options.push({ label: `${k} (${v})`, key: k }));
 
-  row.innerHTML = pills.map(p => `
-    <button class="filter-pill ${activeFilter === p.key ? 'active' : ''}"
-            onclick="setFilter('${p.key.replace(/'/g,"\\'")}')">
-      ${p.label}
-      <span class="pill-count">${p.count}</span>
-    </button>`).join('');
+  row.innerHTML = `
+    <select class="filter-select" onchange="setFilter(this.value)">
+      ${options.map(o => `<option value="${o.key.replace(/"/g,'&quot;')}" ${activeFilter === o.key ? 'selected' : ''}>${o.label}</option>`).join('')}
+    </select>`;
 }
 
 function setFilter(key) {
