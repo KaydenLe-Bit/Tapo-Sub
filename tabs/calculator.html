@@ -90,7 +90,7 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Số lượng (Cam)</label>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Số lượng (Mắt)</label>
             <input type="number" id="hdd-cameras" min="1" value="4" class="w-full p-3 border-2 border-slate-200 rounded-xl outline-none focus:border-blue-500" oninput="calcHDD()">
           </div>
           <div id="hdd-days-input">
@@ -111,7 +111,14 @@
             <img src="https://static.tapo.com/res/new-home/tapo.svg?v=202410101530" alt="Tapo" class="h-5">
           </div>
           <div id="hdd-result-display"></div>
-          <p class="text-[11px] text-slate-400 font-medium pt-2 border-t border-slate-100 flex items-center gap-1"><i data-lucide="info" class="w-3 h-3"></i> Dùng ổ cứng chuyên dụng 24/7.</p>
+			<div class="bg-amber-50 border border-amber-200/60 rounded-xl p-3 text-xs text-amber-900 space-y-1 mt-3">
+			  <p class="font-bold flex items-center gap-1.5 text-amber-800">
+				<i data-lucide="alert-circle" class="w-4 h-4 text-amber-600"></i> Ghi chú quan trọng:
+			  </p>
+			  <p>• Khuyên dùng ổ cứng chuyên dụng 24/7 (Western Purple, Seagate SkyHawk,...).</p>
+			  <p>• Không nên dùng ổ cứng di động hoặc ổ cứng PC thông thường.</p>
+			  <p>• Số liệu dùng để tham khảo, sẽ thay đổi tùy thuộc cấu hình và thiết bị.</p>
+			</div>
         </div>
       </div>
     </div>
@@ -271,7 +278,7 @@
       if (state.hddMode === 'calc-cap') {
         const days = Math.max(1, parseInt($('hdd-days').value) || 1);
         const gb = Math.ceil(rateDay * days * cams);
-        $('hdd-result-display').innerHTML = `<div class="bg-gradient-to-br from-sky-50 to-sky-100 border border-sky-200 rounded-xl p-6 mb-3"><span class="text-xs font-bold text-sky-800 uppercase block mb-2">Dung lượng cần thiết</span><div class="flex items-baseline gap-2"><span class="text-6xl font-extrabold text-sky-700 tracking-tighter">${gb>=1000 ? (gb/1024).toFixed(2) : gb}</span><span class="text-xl font-bold text-sky-600">${gb>=1000 ? 'TB' : 'GB'}</span></div></div><div class="bg-slate-50 border border-slate-100 rounded-xl p-3.5"><span class="text-xs font-medium text-slate-500 block">Cấu hình:</span><span class="text-sm font-bold text-slate-800">${cams} Cam × ${days} Ngày (24/24)</span></div>`;
+        $('hdd-result-display').innerHTML = `<div class="bg-gradient-to-br from-sky-50 to-sky-100 border border-sky-200 rounded-xl p-6 mb-3"><span class="text-xs font-bold text-sky-800 uppercase block mb-2">Dung lượng cần thiết ước tính</span><div class="flex items-baseline gap-2"><span class="text-6xl font-extrabold text-sky-700 tracking-tighter">${gb>=1000 ? (gb/1024).toFixed(2) : gb}</span><span class="text-xl font-bold text-sky-600">${gb>=1000 ? 'TB' : 'GB'}</span></div></div><div class="bg-slate-50 border border-slate-100 rounded-xl p-3.5"><span class="text-xs font-medium text-slate-500 block">Cấu hình:</span><span class="text-sm font-bold text-slate-800">${cams} Cam × ${days} Ngày (24/24)</span></div>`;
       } else {
         const cap = Math.max(1, parseFloat($('hdd-capacity').value) || 1024);
         const days = ((cap / (resRates[state.hddRes] * cams)) / 24).toFixed(1);
