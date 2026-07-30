@@ -255,6 +255,65 @@
       transition: gap 0.2s;
     }
     .catalog-card:hover .catalog-card-cta { gap: 8px; }
+
+    /* ── FILTERS ROW (search + dropdown, aligned) ── */
+    .filters-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .filters-row .search-wrap {
+      position: relative;
+      max-width: 42px;
+      margin-bottom: 0;
+      transition: max-width .25s ease;
+      flex: 0 0 auto;
+    }
+    .filters-row .search-wrap.expanded {
+      max-width: 400px;
+      flex: 1;
+      min-width: 220px;
+    }
+    .filters-row .search-input {
+      height: 42px;
+      box-sizing: border-box;
+    }
+    .filters-row .search-wrap:not(.expanded) { border-radius: 50%; overflow: hidden; }
+    .filters-row .search-wrap:not(.expanded) .search-input { border-radius: 50%; }
+    .filters-row .search-icon { width: 14px; height: 14px; }
+    .filters-row .search-close {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      width: 22px; height: 22px; display: none; align-items: center; justify-content: center;
+      color: #94a3b8; background: none; border: none; cursor: pointer; border-radius: 6px; z-index: 1;
+    }
+    .filters-row .search-close:hover { background: #f1f5f9; color: #475569; }
+    .filters-row .search-wrap.expanded .search-close { display: flex; }
+    .filter-select {
+      height: 40px;
+      padding: 0 34px 0 14px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      color: #334155;
+      background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>') no-repeat right 10px center;
+      background-size: 14px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      max-width: 260px;
+      flex: 0 0 auto;
+      transition: border-color .15s;
+    }
+    .filter-select:hover { border-color: #93c5fd; }
+    .filter-select:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 3px #dbeafe;
+    }
   </style>
 </head>
 <body>
@@ -266,6 +325,8 @@
   // STATE
   // ================================================================
   let currentCatalogSearchQuery = '';
+  let currentCatalogCategoryFilter = '';
+  let catalogSearchExpanded = false;
   let compareList = [];
 
   // ================================================================
@@ -449,12 +510,31 @@
   // ================================================================
   // CATALOG LIST
   // ================================================================
+  function expandCatalogSearch() {
+    catalogSearchExpanded = true;
+    const wrap = document.getElementById('catalog-search-wrap');
+    if (wrap) wrap.classList.add('expanded');
+  }
+
+  function collapseCatalogSearch() {
+    catalogSearchExpanded = false;
+    currentCatalogSearchQuery = '';
+    renderCatalogList();
+  }
+
+  function onCatalogCategoryChange(value) {
+    currentCatalogCategoryFilter = value;
+    renderCatalogList();
+  }
+
   function renderCatalogList() {
     const container = document.getElementById('catalog-root');
-    const filteredProducts = (typeof TapoProducts !== 'undefined' ? TapoProducts : []).filter(p =>
-      p.name.toLowerCase().includes(currentCatalogSearchQuery.toLowerCase()) ||
-      p.category.toLowerCase().includes(currentCatalogSearchQuery.toLowerCase())
-    );
+    const filteredProducts = (typeof TapoProducts !== 'undefined' ? TapoProducts : []).filter(p => {
+      const term = currentCatalogSearchQuery.toLowerCase();
+      const matchesTerm = p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term);
+      const matchesCategory = !currentCatalogCategoryFilter || p.category === currentCatalogCategoryFilter;
+      return matchesTerm && matchesCategory;
+    });
 
     let productsHTML = filteredProducts.length === 0 ? `
       <div style="grid-column:1/-1;text-align:center;padding:4rem 1rem;background:#fff;border-radius:16px;border:1.5px dashed #e2e8f0">
@@ -493,6 +573,15 @@
         </div>`;
       }).join('');
 
+    const allProducts = typeof TapoProducts !== 'undefined' ? TapoProducts : [];
+    const categoryCounts = {};
+    allProducts.forEach(p => { categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1; });
+    const categoryOptions = [{ label: `Tất cả danh mục (${allProducts.length})`, key: '' }];
+    Object.entries(categoryCounts).forEach(([k, v]) => categoryOptions.push({ label: `${k} (${v})`, key: k }));
+    const categoryOptionsHTML = categoryOptions.map(o =>
+      `<option value="${o.key.replace(/"/g,'&quot;')}" ${currentCatalogCategoryFilter === o.key ? 'selected' : ''}>${o.label}</option>`
+    ).join('');
+
     container.innerHTML = `
       <div class="page-header">
         <div class="page-eyebrow">
@@ -502,15 +591,25 @@
         <h1 class="page-title">Tra cứu thông số kỹ thuật</h1>
         <p class="page-sub">Xem và tìm kiếm thông số chi tiết của các thiết bị Tapo.</p>
       </div>
-      <div class="search-wrap" style="max-width:560px">
-        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="catalog-search" class="search-input" placeholder="Tìm theo tên thiết bị hoặc danh mục..." value="${currentCatalogSearchQuery}">
+      <div class="filters-row">
+        <div class="search-wrap" id="catalog-search-wrap">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="catalog-search" class="search-input" placeholder="Tìm theo tên thiết bị hoặc danh mục..." value="${currentCatalogSearchQuery}" onfocus="expandCatalogSearch()">
+          <button type="button" class="search-close" onclick="collapseCatalogSearch()" aria-label="Đóng tìm kiếm">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <select id="catalog-category-filter" class="filter-select" onchange="onCatalogCategoryChange(this.value)">
+          ${categoryOptionsHTML}
+        </select>
       </div>
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         ${productsHTML}
       </div>`;
 
     const searchInput = document.getElementById('catalog-search');
+    const searchWrap = document.getElementById('catalog-search-wrap');
+    if (searchWrap && catalogSearchExpanded) searchWrap.classList.add('expanded');
     if (searchInput) {
       // Giữ con trỏ cuối
       const val = searchInput.value;
@@ -520,7 +619,7 @@
         renderCatalogList();
       });
       // Focus giữ lại sau re-render nếu user đang gõ
-      if (document.activeElement === document.body && currentCatalogSearchQuery) {
+      if (catalogSearchExpanded) {
         searchInput.focus();
       }
     }
