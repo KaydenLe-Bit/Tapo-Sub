@@ -67,13 +67,9 @@
         <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg></span>
         Tính Toán Lưu Trữ
       </button>
-      <button onclick="switchTab('lock')" id="nav-lock" class="sidebar-nav-btn">
+      <button onclick="switchTab('support')" id="nav-support" class="sidebar-nav-btn">
         <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
-        Tra cứu Bảo hành
-      </button>
-      <button onclick="switchTab('installer')" id="nav-installer" class="sidebar-nav-btn">
-        <span class="icon-wrap"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
-        Trung tâm Ủy quyền
+        Bảo hành &amp; Ủy quyền
       </button>
     </div>
 
@@ -246,76 +242,89 @@
         ></iframe>
       </div>
 
-            <!-- ===== WARRANTY TAB ===== -->
-      <div id="tab-lock" class="fade-in hidden">
+            <!-- ===== SUPPORT TAB (Bảo hành + Ủy quyền gộp) ===== -->
+      <div id="tab-support" class="fade-in hidden">
         <div class="page-header">
           <div class="page-eyebrow">
             <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Bảo hành
+            Hỗ trợ
           </div>
-          <h1 class="page-title">Tra cứu bảo hành theo SN</h1>
-          <p class="page-sub">Kiểm tra tình trạng bảo hành thiết bị Tapo bằng số Serial Number.</p>
+          <h1 class="page-title">Bảo hành &amp; Trung tâm Ủy quyền</h1>
+          <p class="page-sub">Tra cứu tình trạng bảo hành theo SN hoặc tìm trung tâm tiếp nhận ủy quyền Tapo.</p>
         </div>
-        <div class="warranty-wrap">
-          <div class="warranty-hero">
-            <div class="shield-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+
+        <!-- Sub-tab toggle -->
+        <div id="support-subtab-bar" style="display:flex;gap:0.5rem;margin-bottom:1.75rem;background:#f1f5f9;border-radius:14px;padding:5px">
+          <button id="stab-warranty" onclick="switchSupportTab('warranty')" class="stab-btn stab-active" style="flex:1;padding:0.6rem 0.75rem;border:none;border-radius:10px;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.5rem;transition:all 0.18s">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Tra cứu Bảo hành
+          </button>
+          <button id="stab-installer" onclick="switchSupportTab('installer')" class="stab-btn" style="flex:1;padding:0.6rem 0.75rem;border:none;border-radius:10px;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.5rem;transition:all 0.18s">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Trung tâm Ủy quyền
+          </button>
+        </div>
+
+        <style>
+          .stab-btn { background: transparent; color: #64748b; }
+          .stab-btn.stab-active { background: #fff; color: #1d4ed8; box-shadow: 0 1px 6px rgba(0,0,0,0.10); }
+          .stab-btn:hover:not(.stab-active) { background: rgba(255,255,255,0.6); color: #334155; }
+        </style>
+
+        <!-- Warranty panel -->
+        <div id="spanel-warranty">
+          <div class="warranty-wrap">
+            <div class="warranty-hero">
+              <div class="shield-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <h2 style="font-size:1.375rem;font-weight:800;margin:0 0 0.375rem">Kiểm tra SN bảo hành</h2>
+              <p style="color:rgba(255,255,255,0.65);font-size:0.85rem;margin:0">Mở cổng tra cứu bảo hành chính thức của Tapo</p>
             </div>
-            <h2 style="font-size:1.375rem;font-weight:800;margin:0 0 0.375rem">Kiểm tra SN bảo hành</h2>
-            <p style="color:rgba(255,255,255,0.65);font-size:0.85rem;margin:0">Mở cổng tra cứu bảo hành chính thức của Tapo</p>
-          </div>
-          <div class="warranty-body">
-            <div class="info-box" style="margin-bottom:1.25rem">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span>Số SN được in trên tem dán ở thân sản phẩm hoặc trên hộp của thiết bị Tapo.</span>
+            <div class="warranty-body">
+              <div class="info-box" style="margin-bottom:1.25rem">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>Số SN được in trên tem dán ở thân sản phẩm hoặc trên hộp của thiết bị Tapo.</span>
+              </div>
+              <a id="warranty-check-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-bottom:0.75rem">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                Kiểm tra SN bảo hành ngay
+              </a>
+              <a href="https://zalo.me/Tplink" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Không tra được? Liên hệ Zalo hỗ trợ
+              </a>
             </div>
-            <a id="warranty-check-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-bottom:0.75rem">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              Kiểm tra SN bảo hành ngay
-            </a>
-            <a href="https://zalo.me/Tplink" target="_blank" rel="noopener noreferrer" class="btn-secondary">
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              Không tra được? Liên hệ Zalo hỗ trợ
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== INSTALLER TAB ===== -->
-      <div id="tab-installer" class="fade-in hidden">
-        <div class="page-header">
-          <div class="page-eyebrow">
-            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Địa điểm
-          </div>
-          <h1 class="page-title">Trung tâm tiếp nhận ủy quyền</h1>
-          <p class="page-sub">Chọn nhóm và khu vực để xem danh sách trung tâm tiếp nhận ủy quyền Tapo.</p>
-        </div>
-
-        <div style="margin-bottom:1.25rem">
-          <label class="form-label">Bạn là:</label>
-          <div class="pill-group">
-            <button id="auth-group-tgdd" onclick="setAuthGroup('tgdd')" class="pill active">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              Khách Hàng Năm 1
-            </button>
-            <button id="auth-group-other" onclick="setAuthGroup('other')" class="pill">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              Khách Hàng Năm 2
-            </button>
           </div>
         </div>
 
-        <div style="margin-bottom:1.5rem">
-          <label class="form-label">Khu vực:</label>
-          <div class="pill-group">
-            <button id="auth-region-bac" onclick="setAuthRegion('bac')" class="pill">Miền Bắc</button>
-            <button id="auth-region-trung" onclick="setAuthRegion('trung')" class="pill">Miền Trung</button>
-            <button id="auth-region-nam" onclick="setAuthRegion('nam')" class="pill">Miền Nam</button>
+        <!-- Installer panel -->
+        <div id="spanel-installer" style="display:none">
+          <div style="margin-bottom:1.25rem">
+            <label class="form-label">Bạn là:</label>
+            <div class="pill-group">
+              <button id="auth-group-tgdd" onclick="setAuthGroup('tgdd')" class="pill active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Khách Hàng Năm 1
+              </button>
+              <button id="auth-group-other" onclick="setAuthGroup('other')" class="pill">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Khách Hàng Năm 2
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div id="centers-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+          <div style="margin-bottom:1.5rem">
+            <label class="form-label">Khu vực:</label>
+            <div class="pill-group">
+              <button id="auth-region-bac" onclick="setAuthRegion('bac')" class="pill">Miền Bắc</button>
+              <button id="auth-region-trung" onclick="setAuthRegion('trung')" class="pill">Miền Trung</button>
+              <button id="auth-region-nam" onclick="setAuthRegion('nam')" class="pill">Miền Nam</button>
+            </div>
+          </div>
+
+          <div id="centers-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        </div>
       </div>
 
     </div><!-- /page-content -->
@@ -358,17 +367,11 @@
       </div>
       Tính toán
     </button>
-    <button onclick="switchTab('lock')" id="mnav-lock" class="mobile-nav-item">
+    <button onclick="switchTab('support')" id="mnav-support" class="mobile-nav-item">
       <div class="nav-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </div>
-      Bảo hành
-    </button>
-    <button onclick="switchTab('installer')" id="mnav-installer" class="mobile-nav-item">
-      <div class="nav-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      </div>
-      Ủy quyền
+      Hỗ trợ
     </button>
   </div>
 </nav>
@@ -410,8 +413,7 @@
     catalog: 'Thông số Kỹ Thuật Và So Sánh Camera Tapo',
     products: 'Video Hướng Dẫn và Hỗ Trợ Tapo',
     calculator: 'Tính Toán Lưu Trữ Camera Tapo',
-    lock: 'Tra cứu Bảo hành TP-Link Tapo',
-    installer: 'Trung tâm Ủy quyền TP-Link Tapo'
+    support: 'Bảo hành &amp; Trung tâm Ủy quyền Tapo'
   };
 
   // DEFAULT CONFIG
@@ -481,7 +483,7 @@
 
   function switchTab(tab) {
     activeTab = tab;
-    const tabs = ['faq','catalog','products','calculator','lock','installer'];
+    const tabs = ['faq','catalog','products','calculator','support'];
     tabs.forEach(t => {
       document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);
     });
@@ -503,6 +505,11 @@
     // Tab catalog và faq đã tách sang iframe (tự render)
     if (tab !== 'catalog' && tab !== 'faq') {
       lucide.createIcons();
+    }
+
+    // Nếu chuyển sang tab support, init warranty link
+    if (tab === 'support') {
+      initWarrantyCheck();
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -591,6 +598,20 @@
   function initWarrantyCheck() {
     const link = document.getElementById('warranty-check-link');
     if (link) link.href = (typeof WARRANTY_CHECK_URL !== 'undefined' && WARRANTY_CHECK_URL) || '#';
+  }
+
+  // SUPPORT SUB-TAB TOGGLE
+  let activeSupportTab = 'warranty';
+  function switchSupportTab(panel) {
+    activeSupportTab = panel;
+    // Toggle panels
+    document.getElementById('spanel-warranty').style.display = panel === 'warranty' ? '' : 'none';
+    document.getElementById('spanel-installer').style.display = panel === 'installer' ? '' : 'none';
+    // Toggle button styles
+    document.getElementById('stab-warranty').classList.toggle('stab-active', panel === 'warranty');
+    document.getElementById('stab-installer').classList.toggle('stab-active', panel === 'installer');
+    // If switching to installer, render centers
+    if (panel === 'installer') renderAuthorizedCenters();
   }
 
   // INSTALLER
