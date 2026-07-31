@@ -60,7 +60,8 @@
     .compare-row-val {
       font-size: 0.78rem; color: #64748b;
       padding: 0.7rem 0.875rem;
-      display: flex; align-items: center;
+      display: flex; align-items: flex-start;
+      line-height: 1.6;
     }
     .compare-row-val + .compare-row-val {
       border-left: 1px solid #f1f5f9;
@@ -465,10 +466,12 @@
     const rowsHTML = keys.map(key => {
       const va = a.specs[key] || '—', vb = b.specs[key] || '—';
       const diff = va !== vb;
+      const fva = String(va).replace(/\n/g, '<br>');
+      const fvb = String(vb).replace(/\n/g, '<br>');
       return `<div class="compare-row${diff ? ' diff' : ''}">
         <div class="compare-row-key">${key}</div>
-        <div class="compare-row-val" data-label="A">${va}</div>
-        <div class="compare-row-val" data-label="B">${vb}</div>
+        <div class="compare-row-val" data-label="A">${fva}</div>
+        <div class="compare-row-val" data-label="B">${fvb}</div>
       </div>`;
     }).join('');
 
