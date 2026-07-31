@@ -641,7 +641,8 @@
 
     let specsHTML = '';
     for (const [key, value] of Object.entries(product.specs)) {
-      specsHTML += `<div class="spec-row"><div class="spec-key">${key}</div><div class="spec-val">${value}</div></div>`;
+      const formattedValue = String(value).replace(/\n/g, '<br>');
+      specsHTML += `<div class="spec-row"><div class="spec-key">${key}</div><div class="spec-val">${formattedValue}</div></div>`;
     }
 
     document.getElementById('catalog-root').innerHTML = `
