@@ -55,8 +55,8 @@ const TapoProducts = [
     shortDesc: "Camera ống kính kép 2K trong nhà, chuẩn ONVIF, theo dõi toàn diện góc rộng.",
     detailLink: "https://www.tp-link.com/vn/home-networking/cloud-camera/tapo-c245d/",
     specs: {
-      "1. Chất lượng hình ảnh": "• 2K/3MP x 2 (ống kính kép) – 2 mắt quay cùng lúc, 1 hình bao quát + 1 hình phóng cận, xem 1 lần thấy cả 2 góc\n• Góc rộng 122° / 65° – 1 camera bao quát được không gian rộng, đỡ phải lắp nhiều camera\n• Thiếu sáng nhẹ (chạng vạng) vẫn nhìn được, ảnh sẽ hơi tối hơn dòng cao cấp",
-      "2. Xem ban đêm": "• Hồng ngoại thường – ban đêm chuyển qua ảnh đen trắng\n• Không có đèn trợ sáng, nhìn đêm bằng hồng ngoại/cảm biến\n• Tầm nhìn đêm xác nhận tới khoảng 12m (theo thông số hãng)",
+      "1. Chất lượng hình ảnh": "• 2 ống kính độc lập, mỗi lens 2K/3MP – quay đồng thời, xem 1 lần thấy cả 2 góc\n  ↳ Lens góc rộng: 122° (H: 104°) – bao quát toàn phòng\n  ↳ Lens phóng to: 65° (H: 57°) – zoom cận chi tiết góc hẹp\n• Cảm biến 1/2.8\" Starlight – khẩu độ F1.6 (cả 2 lens), nhạy sáng tốt\n• Zoom số: 10.8x (mỗi lens)\n• Xoay quét: Pan 360° / Tilt 100° – bao phủ toàn bộ phòng không điểm mù",
+      "2. Xem ban đêm": "• Hồng ngoại thường – ban đêm chuyển qua ảnh đen trắng\n• Đèn hồng ngoại 850nm x6, tầm nhìn đêm tới khoảng 12m (theo thông số hãng)",
       "3. Xử lý hình ảnh": "• WDR – cân bằng sáng ngược, lắp hướng cửa sổ/nắng chiếu vẫn không bị chói",
       "4. Kết nối & lưu trữ": "• Wi-Fi 802.11b/g/n – 2.4GHz – WPA2\n• Thẻ nhớ MicroSD tối đa 512GB\n• Cloud Tapo Care (tùy chọn) – có phí/tháng",
       "5. Tính năng AI thông minh": "• Nhận diện: chuyển động, người, xe, thú cưng, tiếng khóc trẻ — bớt báo động giả\n• Khoanh vùng phát hiện tùy chỉnh (chỉ báo động khu vực mình chọn)\n• On-device AI (AI xử lý ngay trên camera) – nhận diện nhanh, không cần gửi dữ liệu lên máy chủ để phân tích",
@@ -73,8 +73,8 @@ const TapoProducts = [
     image: "https://static.tp-link.com/upload/image-line/Tapo_C260_UN_1.0_overview_01_normal_20250314011954p.jpg",
     shortDesc: "Camera trong nhà độ phân giải cực cao 4K/8MP, nhận diện khuôn mặt AI.",
     specs: {
-      "1. Chất lượng hình ảnh": "• 4K / 8MP – độ phân giải hình ảnh, số càng cao càng nét khi phóng to\n• Góc rộng 110° – 1 camera bao quát được không gian rộng, đỡ phải lắp nhiều camera\n• Cảm biến nhạy sáng – chạng vạng, phòng thiếu đèn vẫn lên hình rõ màu",
-      "2. Xem ban đêm": "• Starlight – ban đêm ảnh vẫn rõ nét, ít bị nhiễu hạt (vẫn là ảnh đen trắng)\n• Không có đèn trợ sáng, nhìn đêm bằng hồng ngoại/cảm biến\n• Tầm nhìn đêm xác nhận tới khoảng 12m (theo thông số hãng)",
+      "1. Chất lượng hình ảnh": "• 4K / 8MP – độ phân giải cực cao, phóng to vẫn rõ từng chi tiết\n• Góc rộng 110° (Diagonal) – 1 camera bao quát được không gian rộng\n• Cảm biến 1/2.7\" Starlight – khẩu độ F1.6, lọt sáng tốt, nhạy trong môi trường tối\n• Zoom số: 18x\n• Ống kính cố định (không xoay) – lắp 1 góc, chụp bao quát",
+      "2. Xem ban đêm": "• Starlight – ban đêm ảnh vẫn rõ nét, ít bị nhiễu hạt (vẫn là ảnh đen trắng)\n• Đèn hồng ngoại 850nm, tầm nhìn đêm tới khoảng 12m (theo thông số hãng)",
       "3. Xử lý hình ảnh": "• WDR – cân bằng sáng ngược, lắp hướng cửa sổ/nắng chiếu vẫn không bị chói\n• Giảm nhiễu 3D (3DNR) – hình ảnh mượt, ít hạt nhiễu khi thiếu sáng",
       "4. Kết nối & lưu trữ": "• Wi-Fi 802.11a/b/g/n – 2.4GHz & 5GHz – WPA2/WPA3\n• Thẻ nhớ MicroSD tối đa 512GB\n• Cloud Tapo Care (tùy chọn) – có phí/tháng",
       "5. Tính năng AI thông minh": "• Nhận diện: chuyển động, người, xe, thú cưng, tiếng khóc trẻ — bớt báo động giả\n• Khoanh vùng phát hiện tùy chỉnh (chỉ báo động khu vực mình chọn)\n• On-device AI (AI xử lý ngay trên camera) – nhận diện nhanh, không cần gửi dữ liệu lên máy chủ để phân tích",
